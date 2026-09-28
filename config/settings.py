@@ -99,6 +99,11 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
         'HOST': os.environ.get('DB_HOST', ''),
         'PORT': os.environ.get('DB_PORT', ''),
+        'OPTIONS': {
+            'ssl': {
+                'ca': BASE_DIR / 'ca.pem',
+            },
+        },
     },
 
     # SQLite dùng làm dữ liệu backup/local
