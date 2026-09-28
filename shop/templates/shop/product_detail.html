@@ -1,0 +1,282 @@
+{% extends "shop/base.html" %}
+{% load shop_filters %}
+{% block title %}{{ product.name }} - SBCB Shop Chính Hãng{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="fpt-breadcrumb" aria-label="breadcrumb">
+    <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'shop:product_list' %}">Trang chủ</a>
+        <span class="text-muted">›</span>
+        <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+        <span class="text-muted">›</span>
+        <span class="active">{{ product.name }}</span>
+    </div>
+</nav>
+
+<!-- Main Detail Card -->
+<div class="fpt-detail-card">
+    <div class="row g-4">
+        <!-- Cột trái: Hình ảnh & Chính sách SBCB -->
+        <div class="col-lg-5">
+            <div class="fpt-detail-img-box">
+                {% if product.discount_percent %}
+                    <span class="discount-ribbon" style="position:absolute; top:12px; left:12px;">-{{ product.discount_percent }}%</span>
+                {% endif %}
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" id="mainProductImg">
+                {% else %}
+                    <div class="d-flex flex-column align-items-center justify-content-center" style="height:300px;">
+                        <span style="font-size:4rem;">
+                            {% if 'thoai' in product.category.name|lower %}📱
+                            {% elif 'lap' in product.category.name|lower %}💻
+                            {% elif 'tai' in product.category.name|lower %}🎧
+                            {% elif 'sac' in product.category.name|lower %}⚡
+                            {% elif 'dong' in product.category.name|lower %}⌚
+                            {% else %}📦{% endif %}
+                        </span>
+                        <span class="badge bg-white text-muted border mt-2">SBCB Official</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Cam kết mua hàng tại SBCB Shop -->
+            <div class="card border-0 bg-light mt-3 p-3" style="border-radius: 8px;">
+                <h6 class="fw-bold mb-2 text-danger">🛡️ CHÍNH SÁCH BÁN HÀNG SBCB SHOP</h6>
+                <div class="small d-flex flex-column gap-2 text-secondary">
+                    <div>✔ <strong>100% Hàng chính hãng</strong>, bảo hành tại hệ thống cửa hàng toàn quốc.</div>
+                    <div>✔ <strong>Lỗi 1 đổi 1 trong 30 ngày</strong> với tất cả lỗi từ nhà sản xuất.</div>
+                    <div>✔ <strong>Giao hàng hỏa tốc trong 2 giờ</strong> tại khu vực nội thành.</div>
+                    <div>✔ <strong>Cài đặt phần mềm & vệ sinh máy</strong> hoàn toàn miễn phí trọn đời.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột phải: Thông tin, Giá, Khuyến mãi & Mua hàng -->
+        <div class="col-lg-7">
+            <span class="badge bg-danger-subtle text-danger fw-bold mb-2">CHÍNH HÃNG VN/A</span>
+            <h1 class="fpt-detail-title">{{ product.name }}</h1>
+
+            <div class="fpt-detail-meta">
+                <span>Danh mục: <strong class="text-dark">{{ product.category.name }}</strong></span>
+                <span>|</span>
+                <span>Đánh giá: <strong class="text-warning">★★★★★</strong> ({{ reviews|length }} đánh giá)</span>
+                <span>|</span>
+                <span>Tình trạng:
+                    {% if product.in_stock %}
+                        <strong class="text-success">✔ Còn hàng ({{ product.stock }})</strong>
+                    {% else %}
+                        <strong class="text-danger">✘ Tạm hết hàng</strong>
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Khối giá bán nổi bật -->
+            <div class="fpt-detail-price-box">
+                <span class="price-current">{{ product.price|vnd }}₫</span>
+                {% if product.compare_price %}
+                    <span class="price-compare">{{ product.compare_price|vnd }}₫</span>
+                {% endif %}
+                {% if product.discount_percent %}
+                    <span class="price-discount">Tiết kiệm {{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+
+            <!-- Phiên bản bộ nhớ / Màu sắc mẫu -->
+            <div class="mb-3">
+                <label class="form-label fw-bold small text-muted text-uppercase mb-1">Tuỳ chọn phiên bản:</label>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="button" class="btn btn-sm btn-outline-danger active fw-semibold px-3 py-1">Tiêu chuẩn</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary fw-semibold px-3 py-1">Nâng cấp RAM</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary fw-semibold px-3 py-1">Bản Pro Max</button>
+                </div>
+            </div>
+
+            <!-- Khung Khuyến Mãi Đặc Quyền SBCB Shop -->
+            <div class="fpt-promo-box">
+                <div class="promo-header">
+                    <span>🎁 KHUYẾN MÃI ĐẶC QUYỀN SBCB SHOP</span>
+                </div>
+                <div class="promo-body">
+                    <div class="promo-item">
+                        <span class="promo-badge">KM 1</span>
+                        <span>Quét mã QR để xem đúng số tiền của đơn hàng.</span>
+                    </div>
+                    <div class="promo-item">
+                        <span class="promo-badge">KM 2</span>
+                        <span>Tặng gói <strong>Bảo hiểm rơi vỡ vào nước 12 tháng</strong> trị giá 1.500.000₫.</span>
+                    </div>
+                    <div class="promo-item">
+                        <span class="promo-badge">KM 3</span>
+                        <span>Thu cũ đổi mới - <strong>Trợ giá thêm đến 3.000.000₫</strong> khi lên đời điện thoại, laptop.</span>
+                    </div>
+                    <div class="promo-item">
+                        <span class="promo-badge">KM 4</span>
+                        <span>Giảm ngay <strong>30%</strong> khi mua kèm combo phụ kiện sạc dự phòng, ốp lưng, tai nghe.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút mua hàng / Form thêm vào giỏ -->
+            {% if product.in_stock %}
+            <form method="post" action="{% url 'shop:cart_add' product.id %}">
+                {% csrf_token %}
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <label class="fw-bold small text-muted mb-0">Số lượng:</label>
+                    <div style="width: 90px;">
+                        {{ form.quantity }}
+                    </div>
+                </div>
+
+                <div class="fpt-cta-row">
+                    <button type="submit" class="btn-buy-now">
+                        <span class="main-text">🛒 MUA NGAY</span>
+                        <span class="sub-text">Giao hàng tận nơi 2H hoặc nhận tại shop</span>
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <div class="alert alert-warning">
+                <strong>Sản phẩm tạm thời hết hàng.</strong> Quý khách vui lòng để lại yêu cầu hỗ trợ hoặc chọn sản phẩm khác.
+            </div>
+            {% endif %}
+
+            <!-- Mô tả tóm tắt -->
+            <div class="mt-4 pt-3 border-top">
+                <h6 class="fw-bold text-dark">Đặc điểm nổi bật:</h6>
+                <p class="text-secondary">{{ product.description|linebreaks|default:"Sản phẩm chính hãng với công nghệ tiên tiến nhất, bảo hành chính hãng toàn quốc bởi SBCB Shop." }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Khối Thông Số Kỹ Thuật & Đánh Giá -->
+<div class="row g-4 mb-5">
+    <!-- Cột trái: Bảng thông số kỹ thuật chuẩn SBCB Shop -->
+    <div class="col-lg-6">
+        <div class="bg-white p-4 rounded shadow-sm border" style="border-radius: 8px;">
+            <h5 class="fw-bold mb-3 border-start border-4 border-danger ps-2">📊 THÔNG SỐ KỸ THUẬT</h5>
+            <table class="fpt-specs-table">
+                <tbody>
+                    <tr>
+                        <td class="spec-name">Tên sản phẩm</td>
+                        <td class="spec-val">{{ product.name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="spec-name">Danh mục</td>
+                        <td class="spec-val">{{ product.category.name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="spec-name">Tình trạng máy</td>
+                        <td class="spec-val">Mới 100% nguyên seal nguyên hộp</td>
+                    </tr>
+                    <tr>
+                        <td class="spec-name">Xuất xứ & Phân phối</td>
+                        <td class="spec-val">Chính hãng VN/A phân phối bởi SBCB</td>
+                    </tr>
+                    <tr>
+                        <td class="spec-name">Bảo hành</td>
+                        <td class="spec-val">12 tháng chính hãng tại hệ thống SBCB Shop</td>
+                    </tr>
+                    <tr>
+                        <td class="spec-name">Bộ sản phẩm gồm</td>
+                        <td class="spec-val">Thân máy, cáp sạc cao cấp, sách hướng dẫn, cây lấy sim</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Cột phải: Đánh giá & Nhận xét của khách hàng -->
+    <div class="col-lg-6">
+        <div class="bg-white p-4 rounded shadow-sm border" style="border-radius: 8px;">
+            <h5 class="fw-bold mb-3 border-start border-4 border-danger ps-2">
+                ⭐ ĐÁNH GIÁ TỪ KHÁCH HÀNG
+                {% if product.average_rating %}
+                    <span class="text-danger fs-6">({{ product.average_rating }}/5 · {{ reviews|length }} đánh giá)</span>
+                {% endif %}
+            </h5>
+
+            <!-- Danh sách nhận xét -->
+            {% for r in reviews %}
+            <div class="border-bottom pb-2 mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong class="text-dark">👤 {{ r.user.username }}</strong>
+                    <span class="text-warning">
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= r.rating %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <p class="mb-1 text-secondary mt-1">{{ r.comment }}</p>
+                <span class="text-muted" style="font-size: 0.72rem;">{{ r.created_at|date:"d/m/Y H:i" }} · Đã mua hàng tại SBCB Shop</span>
+            </div>
+            {% empty %}
+            <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên trải nghiệm và chia sẻ!</p>
+            {% endfor %}
+
+            <!-- Form gửi đánh giá -->
+            {% if user_can_review %}
+            <div class="card border p-3 mt-3 bg-light">
+                <h6 class="fw-bold text-danger">Viết đánh giá của bạn</h6>
+                <form method="post" action="{% url 'shop:add_review' product.slug %}">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Chọn số sao:</label>
+                        {{ review_form.rating }}
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Nội dung nhận xét:</label>
+                        {{ review_form.comment }}
+                    </div>
+                    <button type="submit" class="btn btn-fpt-buy btn-sm">Gửi đánh giá ngay</button>
+                </form>
+            </div>
+            {% elif request.user.is_authenticated %}
+            <div class="p-2 bg-light rounded text-muted small mt-2">
+                ℹ️ Bạn cần đặt mua và nhận sản phẩm này để có thể gửi đánh giá xác thực.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Sản phẩm liên quan cùng danh mục -->
+{% if related_products %}
+<section class="mb-5">
+    <h4 class="fpt-section-title mb-3">SẢN PHẨM CÙNG DANH MỤC</h4>
+    <div class="row g-3">
+        {% for p in related_products %}
+        <div class="col-6 col-md-3">
+            <div class="fpt-product-card">
+                {% if p.discount_percent %}
+                    <div class="fpt-card-ribbons">
+                        <span class="ribbon-discount">-{{ p.discount_percent }}%</span>
+                    </div>
+                {% endif %}
+                <a href="{{ p.get_absolute_url }}" class="fpt-product-img-box text-decoration-none">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                    {% else %}
+                        <div class="d-flex flex-column align-items-center justify-content-center">
+                            <span style="font-size: 2.5rem;">📦</span>
+                            <span class="badge bg-white text-muted border mt-1" style="font-size: 0.65rem;">SBCB Official</span>
+                        </div>
+                    {% endif %}
+                </a>
+                <a href="{{ p.get_absolute_url }}" class="fpt-product-title">{{ p.name }}</a>
+                <div class="fpt-price-wrap">
+                    <span class="fpt-price-main">{{ p.price|vnd }}₫</span>
+                </div>
+                <div class="fpt-card-footer mt-auto">
+                    <div class="fpt-card-rating">★★★★★</div>
+                    <a href="{{ p.get_absolute_url }}" class="btn-fpt-buy">Chi tiết</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

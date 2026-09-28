@@ -1,0 +1,33 @@
+{% extends "shop/base.html" %}
+{% block title %}Quản lý người dùng - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">👥 Quản lý người dùng & phân quyền</h3>
+
+<div class="table-responsive">
+<table class="table bg-white rounded shadow-sm align-middle">
+    <thead><tr><th>Tài khoản</th><th>Email</th><th>Ngày tham gia</th><th style="width:260px;">Vai trò</th></tr></thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email|default:"—" }}</td>
+            <td>{{ u.date_joined|date:"d/m/Y" }}</td>
+            <td>
+                <form method="post" action="{% url 'shop:admin_user_set_role' u.id %}" class="d-flex">
+                    {% csrf_token %}
+                    <select name="role" class="form-select form-select-sm me-1">
+                        {% for value, label in roles %}
+                            <option value="{{ value }}" {% if u.profile.role == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-muted text-center">Chưa có người dùng nào.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

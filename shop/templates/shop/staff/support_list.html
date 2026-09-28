@@ -1,0 +1,32 @@
+{% extends "shop/base.html" %}
+{% block title %}Yêu cầu hỗ trợ - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">💬 Yêu cầu hỗ trợ từ khách hàng</h3>
+
+<div class="mb-3">
+    <a href="{% url 'shop:staff_support_list' %}" class="btn btn-sm btn-outline-primary {% if not only_open %}active{% endif %}">Tất cả</a>
+    <a href="?open=1" class="btn btn-sm btn-outline-warning {% if only_open %}active{% endif %}">Đang chờ xử lý</a>
+</div>
+
+<div class="table-responsive">
+<table class="table bg-white rounded shadow-sm align-middle">
+    <thead><tr><th>Khách hàng</th><th>Tiêu đề</th><th>Trạng thái</th><th>Ngày gửi</th><th></th></tr></thead>
+    <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>{{ r.user.username }}</td>
+            <td>{{ r.subject }}</td>
+            <td>
+                {% if r.status == "open" %}<span class="badge bg-warning text-dark">Đang chờ</span>
+                {% else %}<span class="badge bg-success">Đã xử lý</span>{% endif %}
+            </td>
+            <td>{{ r.created_at|date:"d/m/Y H:i" }}</td>
+            <td><a href="{% url 'shop:staff_support_detail' r.id %}" class="btn btn-sm btn-primary">Xử lý</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-muted text-center">Không có yêu cầu nào.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

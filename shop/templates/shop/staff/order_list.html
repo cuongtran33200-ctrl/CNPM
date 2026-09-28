@@ -1,0 +1,35 @@
+{% extends "shop/base.html" %}`n{% load shop_filters %}
+{% block title %}Quản lý đơn hàng - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">👨‍💼 Danh sách đơn hàng</h3>
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a href="{% url 'shop:staff_order_list' %}" class="btn btn-sm btn-outline-primary {% if not current_status %}active{% endif %}">Tất cả</a>
+    {% for value, label in status_choices %}
+        <a href="?status={{ value }}" class="btn btn-sm btn-outline-primary {% if current_status == value %}active{% endif %}">{{ label }}</a>
+    {% endfor %}
+</div>
+
+<div class="table-responsive">
+<table class="table bg-white rounded shadow-sm align-middle">
+    <thead>
+        <tr><th>Mã đơn</th><th>Khách hàng</th><th>SĐT</th><th>Tổng tiền</th><th>Trạng thái</th><th>Ngày đặt</th><th></th></tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.full_name }} ({{ order.user.username }})</td>
+            <td>{{ order.phone }}</td>
+            <td class="fw-bold">{{ order.total_price|vnd }}₫</td>
+            <td><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
+            <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+            <td><a href="{% url 'shop:staff_order_detail' order.id %}" class="btn btn-sm btn-primary">Xử lý</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-muted text-center">Không có đơn hàng nào.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "shop/base.html" %}
+{% load shop_filters %}
+{% block title %}Đơn hàng của tôi - SBCB Shop{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="fpt-breadcrumb" aria-label="breadcrumb">
+    <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'shop:product_list' %}">Trang chủ</a>
+        <span class="text-muted">›</span>
+        <span class="active">Lịch sử đơn hàng của tôi</span>
+    </div>
+</nav>
+
+<div class="fpt-cart-card">
+    <h4 class="fw-bold mb-3 border-bottom pb-2">📋 Danh sách đơn hàng đã đặt</h4>
+
+    {% if orders %}
+    <div class="table-responsive">
+    <table class="table align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Mã đơn</th>
+                <th>Ngày đặt</th>
+                <th>Số lượng SP</th>
+                <th>Tổng thanh toán</th>
+                <th>Trạng thái đơn</th>
+                <th class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td class="fw-bold text-danger">#{{ order.id }}</td>
+                <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                <td>{{ order.total_items }} món</td>
+                <td class="fw-bold text-danger">{{ order.total_price|vnd }}₫</td>
+                <td>
+                    {% if order.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">⏳ Chờ xác nhận</span>
+                    {% elif order.status == 'confirmed' %}
+                        <span class="badge bg-primary">✔ Đã xác nhận</span>
+                    {% elif order.status == 'shipping' %}
+                        <span class="badge bg-info text-dark">🚚 Đang giao hàng</span>
+                    {% elif order.status == 'completed' %}
+                        <span class="badge bg-success">🎉 Hoàn tất</span>
+                    {% elif order.status == 'cancelled' %}
+                        <span class="badge bg-danger">✘ Đã hủy</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                    {% endif %}
+                </td>
+                <td class="text-end">
+                    <a href="{% url 'shop:order_detail' order.id %}" class="btn btn-sm btn-fpt-outline">Xem chi tiết</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="text-center py-4">
+        <p class="text-muted">Quý khách chưa có đơn hàng nào tại SBCB Shop.</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-fpt-buy px-4">Khám phá sản phẩm ngay</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

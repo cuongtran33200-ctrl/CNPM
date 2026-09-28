@@ -1,0 +1,25 @@
+{% extends "shop/base.html" %}`n{% load shop_filters %}
+{% block title %}Thống kê doanh thu - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">💰 Thống kê doanh thu</h3>
+<p class="fs-4">Tổng doanh thu (không tính đơn đã huỷ): <span class="price-tag">{{ total_revenue|vnd }}₫</span></p>
+
+<div class="table-responsive">
+<table class="table bg-white rounded shadow-sm align-middle">
+    <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày</th><th>Trạng thái</th><th>Tổng tiền</th></tr></thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.created_at|date:"d/m/Y" }}</td>
+            <td><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
+            <td class="fw-bold">{{ order.total_price|vnd }}₫</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-muted text-center">Chưa có đơn hàng nào.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

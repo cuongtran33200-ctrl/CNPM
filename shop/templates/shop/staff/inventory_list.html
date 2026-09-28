@@ -1,0 +1,45 @@
+{% extends "shop/base.html" %}`n{% load shop_filters %}
+{% block title %}Quản lý kho - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">📦 Quản lý kho</h3>
+
+<div class="mb-3">
+    <a href="{% url 'shop:staff_inventory' %}" class="btn btn-sm btn-outline-primary {% if not only_low %}active{% endif %}">Tất cả sản phẩm</a>
+    <a href="?low=1" class="btn btn-sm btn-outline-danger {% if only_low %}active{% endif %}">⚠ Sắp hết / hết hàng</a>
+</div>
+
+<div class="table-responsive">
+<table class="table bg-white rounded shadow-sm align-middle">
+    <thead>
+        <tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá</th><th style="width:220px;">Tồn kho</th><th>Trạng thái</th></tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr class="{% if product.stock == 0 %}table-danger{% elif product.is_low_stock %}table-warning{% endif %}">
+            <td>{{ product.name }}</td>
+            <td>{{ product.category.name }}</td>
+            <td>{{ product.price|vnd }}₫</td>
+            <td>
+                <form method="post" action="{% url 'shop:staff_inventory_update' product.id %}" class="d-flex">
+                    {% csrf_token %}
+                    <input type="number" name="stock" value="{{ product.stock }}" min="0" class="form-control form-control-sm me-1" style="width:90px;">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Lưu</button>
+                </form>
+            </td>
+            <td>
+                {% if product.stock == 0 %}
+                    <span class="badge bg-danger">Hết hàng</span>
+                {% elif product.is_low_stock %}
+                    <span class="badge bg-warning text-dark">Sắp hết ({{ product.stock }})</span>
+                {% else %}
+                    <span class="badge bg-success">Còn hàng ({{ product.stock }})</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-muted text-center">Không có sản phẩm nào.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

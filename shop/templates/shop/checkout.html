@@ -1,0 +1,117 @@
+{% extends "shop/base.html" %}
+{% load shop_filters %}
+{% block title %}Thông tin giao hàng - SBCB Shop{% endblock %}
+
+{% block content %}
+<!-- Quy trình mua hàng 3 bước -->
+<div class="fpt-step-indicator">
+    <div class="step-pill">
+        <span class="step-num">✔</span>
+        <span>Giỏ hàng</span>
+    </div>
+    <span class="text-danger">───</span>
+    <div class="step-pill active">
+        <span class="step-num">2</span>
+        <span>Thông tin nhận hàng</span>
+    </div>
+    <span class="text-muted">───</span>
+    <div class="step-pill">
+        <span class="step-num">3</span>
+        <span>Hoàn tất đặt hàng</span>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Form nhập thông tin khách hàng -->
+    <div class="col-lg-7">
+        <div class="fpt-cart-card">
+            <h5 class="fw-bold mb-3 text-danger border-bottom pb-2">📍 THÔNG TIN GIAO HÀNG & NGƯỜI NHẬN</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small">{{ form.full_name.label }} <span class="text-danger">*</span></label>
+                    {{ form.full_name }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small">{{ form.phone.label }} <span class="text-danger">*</span></label>
+                    {{ form.phone }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small">{{ form.address.label }} <span class="text-danger">*</span></label>
+                    {{ form.address }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small">{{ form.note.label }}</label>
+                    {{ form.note }}
+                </div>
+
+                <!-- QR Thanh toán nổi bật -->
+                <div class="qr-checkout-block">
+                    <div class="qr-checkout-header">
+                        <span class="qr-icon">▦</span>
+                        <div>
+                            <div class="fw-bold">QUÉT MÃ QR — XEM SỐ TIỀN ĐƠN HÀNG</div>
+                            <div class="small text-muted mt-1">Mã QR chỉ hiển thị thông tin đơn hàng và số tiền tương ứng.<br>SBCB Shop <strong>không tự động nhận tiền</strong> qua mã QR này.</div>
+                        </div>
+                    </div>
+                    <div class="qr-checkout-img-wrap">
+                        <img src="{{ qr_code }}" alt="Mã QR đơn hàng" class="qr-checkout-img">
+                        <div class="qr-amount-label">Số tiền cần thanh toán</div>
+                        <div class="qr-amount-value">{{ cart.get_total_price|vnd }}₫</div>
+                    </div>
+                    <div class="qr-note-box">
+                        ℹ️ Nhân viên SBCB Shop sẽ liên hệ xác nhận đơn trong vòng <strong>10 phút</strong> và hướng dẫn thanh toán cụ thể.
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-buy-now w-100 py-3 mt-3">
+                    <span class="main-text">XÁC NHẬN ĐẶT HÀNG</span>
+                    <span class="sub-text">Nhân viên SBCB Shop sẽ liên hệ xác nhận trong 10 phút</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Cột phải: Chi tiết đơn hàng tóm tắt -->
+    <div class="col-lg-5">
+        <div class="fpt-cart-card">
+            <h5 class="fw-bold mb-3 border-bottom pb-2">📦 ĐƠN HÀNG CỦA BẠN ({{ cart|length }} món)</h5>
+            <ul class="list-group list-group-flush mb-3">
+                {% for item in cart %}
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <div>
+                        <div class="fw-bold text-dark">{{ item.product.name }}</div>
+                        <small class="text-muted">Số lượng: ×{{ item.quantity }}</small>
+                    </div>
+                    <span class="fw-bold text-danger">{{ item.subtotal|vnd }}₫</span>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Tạm tính:</span>
+                <span class="fw-semibold">{{ cart.get_total_price|vnd }}₫</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Phí vận chuyển SBCB:</span>
+                <span class="text-success fw-semibold">Miễn phí 100%</span>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between align-items-baseline mb-3">
+                <span class="fw-bold">Tổng thanh toán:</span>
+                <span class="fpt-price-main fs-4">{{ cart.get_total_price|vnd }}₫</span>
+            </div>
+
+            <div class="p-3 bg-light rounded small text-secondary">
+                <div class="fw-bold text-danger mb-1">🛡️ CAM KẾT SBCB SHOP</div>
+                <div>✔ 100% Sản phẩm chính hãng chưa kích hoạt</div>
+                <div>✔ Miễn phí đổi mới trong 30 ngày nếu lỗi kỹ thuật</div>
+                <div>✔ Hỗ trợ giao hàng siêu tốc chỉ 2 giờ nội thành</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

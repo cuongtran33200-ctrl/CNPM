@@ -1,0 +1,26 @@
+{% extends "shop/base.html" %}
+{% block title %}Xử lý yêu cầu hỗ trợ - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">Yêu cầu từ {{ req.user.username }}</h3>
+
+<div class="bg-white rounded shadow-sm p-3 mb-3">
+    <h5>{{ req.subject }}</h5>
+    <p>{{ req.message|linebreaks }}</p>
+    <p class="text-muted small mb-0">Gửi lúc: {{ req.created_at|date:"d/m/Y H:i" }}</p>
+</div>
+
+{% if req.staff_reply %}
+<div class="alert alert-success">
+    <strong>Đã phản hồi:</strong> {{ req.staff_reply }}
+</div>
+{% endif %}
+
+<form method="post" class="bg-white rounded shadow-sm p-3">
+    {% csrf_token %}
+    <label class="form-label">Phản hồi cho khách hàng</label>
+    <textarea name="staff_reply" class="form-control mb-2" rows="4">{{ req.staff_reply }}</textarea>
+    <button type="submit" class="btn btn-primary">Gửi phản hồi & đánh dấu đã xử lý</button>
+</form>
+
+<a href="{% url 'shop:staff_support_list' %}" class="btn btn-outline-secondary mt-3">← Quay lại danh sách</a>
+{% endblock %}

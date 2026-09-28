@@ -1,0 +1,98 @@
+{% extends "shop/base.html" %}
+{% load shop_filters %}
+{% block title %}Chi tiết đơn hàng #{{ order.id }} - SBCB Shop{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="fpt-breadcrumb" aria-label="breadcrumb">
+    <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'shop:product_list' %}">Trang chủ</a>
+        <span class="text-muted">›</span>
+        <a href="{% url 'shop:order_history' %}">Lịch sử đơn hàng</a>
+        <span class="text-muted">›</span>
+        <span class="active">Đơn #{{ order.id }}</span>
+    </div>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h3 class="fw-bold mb-0">
+        Chi tiết đơn hàng #{{ order.id }}
+    </h3>
+    <div>
+        {% if order.status == 'pending' %}
+            <span class="badge bg-warning text-dark fs-6 py-2 px-3">⏳ Chờ xác nhận</span>
+        {% elif order.status == 'confirmed' %}
+            <span class="badge bg-primary fs-6 py-2 px-3">✔ Đã xác nhận</span>
+        {% elif order.status == 'shipping' %}
+            <span class="badge bg-info text-dark fs-6 py-2 px-3">🚚 Đang giao hàng</span>
+        {% elif order.status == 'completed' %}
+            <span class="badge bg-success fs-6 py-2 px-3">🎉 Hoàn tất đơn hàng</span>
+        {% elif order.status == 'cancelled' %}
+            <span class="badge bg-danger fs-6 py-2 px-3">✘ Đã hủy</span>
+        {% else %}
+            <span class="badge bg-secondary fs-6 py-2 px-3">{{ order.get_status_display }}</span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột thông tin người nhận -->
+    <div class="col-md-5">
+        <div class="fpt-cart-card h-100">
+            <h5 class="fw-bold mb-3 border-bottom pb-2 text-danger">📍 THÔNG TIN GIAO HÀNG</h5>
+            <p class="mb-2"><strong>Người nhận:</strong> {{ order.full_name }}</p>
+            <p class="mb-2"><strong>Số điện thoại:</strong> {{ order.phone }}</p>
+            <p class="mb-2"><strong>Địa chỉ giao:</strong> {{ order.address }}</p>
+            {% if order.note %}
+                <p class="mb-2"><strong>Ghi chú:</strong> {{ order.note }}</p>
+            {% endif %}
+            <p class="mb-0 text-muted small">Thời gian đặt: {{ order.created_at|date:"d/m/Y H:i:s" }}</p>
+
+            <div class="p-3 bg-light rounded small mt-4 text-secondary">
+                <strong>Tổng đài hỗ trợ giao hàng:</strong> 1900 6868 (Miễn phí)
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột sản phẩm trong đơn -->
+    <div class="col-md-7">
+        <div class="fpt-cart-card h-100">
+            <h5 class="fw-bold mb-3 border-bottom pb-2">📦 SẢN PHẨM TRONG ĐƠN</h5>
+            <ul class="list-group list-group-flush mb-3">
+                {% for item in order.items.all %}
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <div>
+                        <a href="{{ item.product.get_absolute_url }}" class="fw-bold text-dark text-decoration-none">
+                            {{ item.product.name }}
+                        </a>
+                        <div class="text-muted small">Đơn giá: {{ item.price|vnd }}₫ × {{ item.quantity }}</div>
+                    </div>
+                    <span class="fw-bold text-danger">{{ item.subtotal|vnd }}₫</span>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Phí vận chuyển SBCB:</span>
+                <span class="text-success fw-semibold">Miễn phí</span>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between align-items-baseline fs-5">
+                <span class="fw-bold">Tổng thanh toán:</span>
+                <span class="fpt-price-main fs-3">{{ order.total_price|vnd }}₫</span>
+            </div>
+
+            <div class="qr-display mt-4">
+                <img src="{{ qr_code }}" alt="Mã QR hiển thị số tiền đơn hàng">
+                <div class="small text-muted mt-2">Mã QR chỉ hiển thị số tiền đơn hàng</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'shop:order_history' %}" class="btn btn-outline-secondary">← Quay lại danh sách đơn hàng</a>
+</div>
+{% endblock %}

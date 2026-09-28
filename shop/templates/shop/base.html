@@ -1,0 +1,346 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SBCB Shop - Ði?n t? & Ph? ki?n chính hãng{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS (v?i cache-busting time) -->
+    <link href="{% static 'shop/css/style.css' %}?v={% now 'U' %}" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{% static 'shop/img/favicon.png' %}">
+</head>
+<body>
+
+<!-- 1. Topbar Ti?n ích SBCB Shop -->
+<div class="fpt-topbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <span>?? Hotline: <strong class="hotline-pill">1900 6868</strong> (Mi?n phí)</span>
+            <span class="d-none d-md-inline text-secondary">|</span>
+            <span class="d-none d-md-inline">H? th?ng c?a hàng SBCB Shop toàn qu?c</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'shop:order_history' %}" class="d-none d-sm-inline">?? Tra c?u don hàng</a>
+            <span class="d-none d-sm-inline text-secondary">|</span>
+            <a href="/about/">?? Gi?i thi?u SBCB</a>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Main Header SBCB Shop (Tông d? thuong hi?u FPT Shop) -->
+<header class="fpt-header sticky-top">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between gap-2 gap-lg-3">
+
+            <!-- Logo cu c?a b?n: SBCB Shop -->
+            <a class="navbar-brand me-1 me-lg-2 d-flex align-items-center flex-shrink-0" href="{% url 'shop:product_list' %}" title="SBCB Shop - Trang ch?">
+                <img src="{% static 'shop/img/logo-nav.png' %}" alt="SBCB Shop" class="sbcb-logo">
+            </a>
+
+            <!-- Nút Danh m?c Dropdown -->
+            <div class="dropdown d-none d-lg-block flex-shrink-0">
+                <button class="btn-fpt-category dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span>?</span> <span>Danh m?c</span>
+                </button>
+                <ul class="dropdown-menu shadow border-0" style="min-width: 220px; border-radius: 8px;">
+                    <li><h6 class="dropdown-header text-uppercase fw-bold text-danger">T?t c? ngành hàng</h6></li>
+                    <li><a class="dropdown-item py-2 fw-semibold" href="{% url 'shop:product_list' %}">?? T?t c? s?n ph?m</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    {% for c in nav_categories %}
+                        <li>
+                            <a class="dropdown-item py-2 d-flex justify-content-between align-items-center" href="{{ c.get_absolute_url }}">
+                                <span>
+                                    {% if 'tho?i' in c.name|lower or 'thoai' in c.name|lower or 'phone' in c.name|lower %}??
+                                    {% elif 'laptop' in c.name|lower %}??
+                                    {% elif 'tai nghe' in c.name|lower or 'nghe' in c.name|lower or 'airpod' in c.name|lower %}??
+                                    {% elif 's?c' in c.name|lower or 'ph?' in c.name|lower or 'cable' in c.name|lower or 'sac' in c.name|lower %}?
+                                    {% elif 'd?ng h?' in c.name|lower or 'd?ng' in c.name|lower or 'watch' in c.name|lower %}?
+                                    {% else %}???{% endif %}
+                                    {{ c.name }}
+                                </span>
+                                <span class="text-muted small">›</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Thanh tìm ki?m thông minh -->
+            <div class="d-flex flex-column flex-grow-1" style="max-width: 500px;">
+                <form class="fpt-search-box" method="get" action="{% url 'shop:product_list' %}">
+                    <input class="fpt-search-input" type="search" name="q" placeholder="B?n c?n tìm di?n tho?i, laptop, ph? ki?n gì...?" value="{{ request.GET.q }}">
+                    <button class="fpt-search-submit" type="submit" title="Tìm ki?m">??</button>
+                </form>
+                <div class="fpt-quick-chips d-none d-xl-flex">
+                    <a href="{% url 'shop:product_list' %}?q=iPhone">iPhone 16</a>
+                    <a href="{% url 'shop:product_list' %}?q=MacBook">MacBook Air M3</a>
+                    <a href="{% url 'shop:product_list' %}?q=Samsung">Galaxy S24</a>
+                    <a href="{% url 'shop:product_list' %}?q=Anker">S?c nhanh Anker</a>
+                    <a href="{% url 'shop:product_list' %}?q=Sony">Tai nghe Sony</a>
+                </div>
+            </div>
+
+            <!-- Các nút thao tác bên ph?i -->
+            <div class="d-flex align-items-center gap-1 gap-sm-2 flex-shrink-0">
+                <!-- Tra c?u don hàng -->
+                <a class="fpt-header-action d-none d-xl-inline-flex" href="{% url 'shop:order_history' %}">
+                    <span class="fpt-action-icon">??</span>
+                    <span class="text-start" style="font-size: 0.78rem; line-height: 1.2;">
+                        Tra c?u<br><strong>don hàng</strong>
+                    </span>
+                </a>
+
+                <!-- Gi? hàng -->
+                <a class="fpt-header-action" href="{% url 'shop:cart_detail' %}" title="Xem gi? hàng">
+                    <div class="fpt-cart-wrap">
+                        <span class="fpt-action-icon">??</span>
+                        <span class="fpt-cart-badge">{{ cart|length }}</span>
+                    </div>
+                    <span class="d-none d-sm-inline text-start" style="font-size: 0.78rem; line-height: 1.2;">
+                        Gi?<br><strong>hàng</strong>
+                    </span>
+                </a>
+
+                <!-- Tài kho?n / Phân quy?n -->
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="fpt-header-action dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="fpt-action-icon">??</span>
+                            <span class="d-none d-md-inline text-start" style="font-size: 0.78rem; line-height: 1.2;">
+                                Chào,<br><strong>{{ user.username|truncatechars:10 }}</strong>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 8px;">
+                            <li><h6 class="dropdown-header">Tài kho?n: {{ user.username }}</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'shop:profile' %}">?? H? so cá nhân</a></li>
+                            <li><a class="dropdown-item" href="{% url 'shop:order_history' %}">?? Ðon hàng c?a tôi</a></li>
+                            <li><a class="dropdown-item" href="{% url 'shop:support_list' %}">?? Yêu c?u h? tr?</a></li>
+
+                            {% if user.profile.is_admin_role %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header text-danger fw-bold">?? Quy?n Qu?n Tr?</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:admin_dashboard' %}">?? Dashboard t?ng quan</a></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:admin_user_list' %}">?? Qu?n lý ngu?i dùng</a></li>
+                                <li><a class="dropdown-item" href="/admin/">?? Django Admin (S?n ph?m/Ðon)</a></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:admin_stats_revenue' %}">?? Th?ng kê doanh thu</a></li>
+                            {% elif user.profile.is_staff_role %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header text-primary fw-bold">????? Quy?n Nhân Viên</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:staff_order_list' %}">?? Qu?n lý don hàng</a></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:staff_inventory' %}">?? Qu?n lý kho hàng</a></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:staff_customer_list' %}">?? Danh sách khách hàng</a></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:staff_support_list' %}">?? X? lý h? tr?</a></li>
+                            {% endif %}
+
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'shop:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger fw-semibold">?? Ðang xu?t</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="d-flex align-items-center gap-1">
+                        <a href="{% url 'shop:login' %}" class="fpt-header-action">
+                            <span class="fpt-action-icon">??</span>
+                            <span class="d-none d-md-inline" style="font-size: 0.78rem; line-height: 1.2;">
+                                Ðang nh?p
+                            </span>
+                        </a>
+                        <a href="{% url 'shop:register' %}" class="btn btn-sm btn-light fw-bold text-danger d-none d-sm-inline-block px-3" style="border-radius: 20px; font-size: 0.8rem;">
+                            Ðang ký
+                        </a>
+                    </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<!-- 3. Thanh Danh m?c Ngang -->
+<nav class="fpt-nav-strip">
+    <div class="container">
+        <ul class="fpt-nav-list">
+            <li class="fpt-nav-item">
+                <a href="{% url 'shop:product_list' %}" class="fpt-nav-link {% if not category and not query %}active{% endif %}">
+                    <span>??</span> T?T C? S?N PH?M
+                </a>
+            </li>
+            {% for c in nav_categories %}
+            <li class="fpt-nav-item">
+                <a href="{{ c.get_absolute_url }}" class="fpt-nav-link {% if category.id == c.id %}active{% endif %}">
+                    {% if 'tho?i' in c.name|lower or 'thoai' in c.name|lower or 'phone' in c.name|lower %}<span>??</span>
+                    {% elif 'laptop' in c.name|lower %}<span>??</span>
+                    {% elif 'tai nghe' in c.name|lower or 'nghe' in c.name|lower or 'airpod' in c.name|lower %}<span>??</span>
+                    {% elif 's?c' in c.name|lower or 'ph?' in c.name|lower or 'cable' in c.name|lower or 'sac' in c.name|lower %}<span>?</span>
+                    {% elif 'd?ng h?' in c.name|lower or 'd?ng' in c.name|lower or 'watch' in c.name|lower %}<span>?</span>
+                    {% else %}<span>???</span>{% endif %}
+                    {{ c.name }}
+                </a>
+            </li>
+            {% endfor %}
+            <li class="fpt-nav-item">
+                <a href="{% url 'shop:product_list' %}" class="fpt-nav-link text-danger">
+                    <span>?</span> KHUY?N MÃI HOT <span class="hot-badge">SALE</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- 4. Cam k?t Thuong hi?u SBCB Shop (4 Ði?m n?i b?t) -->
+<div class="fpt-commitments">
+    <div class="container">
+        <div class="row g-0">
+            <div class="col-6 col-lg-3 commitment-item">
+                <div class="commitment-icon">??</div>
+                <div class="commitment-text">
+                    <h6>Giao Hàng Siêu T?c 2H</h6>
+                    <p>Mi?n phí giao hàng t? 500.000d</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 commitment-item">
+                <div class="commitment-icon">???</div>
+                <div class="commitment-text">
+                    <h6>100% Hàng Chính Hãng</h6>
+                    <p>Phân ph?i chính th?c, VAT d?y d?</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 commitment-item">
+                <div class="commitment-icon">??</div>
+                <div class="commitment-text">
+                    <h6>L?i 1 Ð?i 1 Trong 30 Ngày</h6>
+                    <p>B?o hành chính hãng toàn qu?c</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 commitment-item">
+                <div class="commitment-icon">?</div>
+                <div class="commitment-text">
+                    <h6>Quét QR Hi?n Th? S? Ti?n</h6>
+                    <p>Thông tin rõ ràng, không t? d?ng nh?n ti?n</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Container Content -->
+<main class="container my-3 my-md-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|cut:'confetti'|cut:' ' }} alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 8px;">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<!-- 5. Footer Chu?n SBCB Shop -->
+<footer class="fpt-footer">
+    <div class="container">
+        <div class="row g-4">
+            <!-- C?t 1: Thông tin liên h? & T?ng dài -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <img src="{% static 'shop/img/logo-nav.png' %}" alt="SBCB Shop" style="height: 38px;" class="mb-3">
+                <div class="hotline-box">
+                    <div class="hl-name">Tu v?n mua hàng (Mi?n phí):</div>
+                    <div class="hl-number">1900 6868 <span>(Nhánh 1)</span></div>
+                </div>
+                <div class="hotline-box">
+                    <div class="hl-name">H? tr? k? thu?t & B?o hành:</div>
+                    <div class="hl-number">1900 6868 <span>(Nhánh 2)</span></div>
+                </div>
+                <div class="hotline-box">
+                    <div class="hl-name">Góp ý, khi?u n?i (8h00 - 22h00):</div>
+                    <div class="hl-number">1900 6868</div>
+                </div>
+                <p class="text-muted small mt-2">Th?i gian ph?c v?: 7h30 - 22h00 t?t c? các ngày trong tu?n.</p>
+            </div>
+
+            <!-- C?t 2: V? SBCB Shop -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <h6>V? H? TH?NG SBCB SHOP</h6>
+                <ul>
+                    <li><a href="/about/">Gi?i thi?u v? SBCB Shop</a></li>
+                    <li><a href="#">H? th?ng c?a hàng toàn qu?c</a></li>
+                    <li><a href="#">Chính sách b?o m?t thông tin</a></li>
+                    <li><a href="#">Quy ch? ho?t d?ng sàn TMÐT</a></li>
+                    <li><a href="#">Tuy?n d?ng m?i nh?t</a></li>
+                    <li><a href="#">H?p tác kinh doanh cùng SBCB</a></li>
+                </ul>
+            </div>
+
+            <!-- C?t 3: Chính sách khách hàng -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <h6>CHÍNH SÁCH MUA HÀNG</h6>
+                <ul>
+                    <li><a href="#">Chính sách giao hàng & L?p d?t</a></li>
+                    <li><a href="#">Chính sách b?o hành d?i tr?</a></li>
+                    <li><a href="#">Chính sách thu cu d?i m?i tr? giá</a></li>
+                    <li><a href="#">B?o m?t thông tin thanh toán</a></li>
+                    <li><a href="#">Hu?ng d?n mua hàng online</a></li>
+                </ul>
+            </div>
+
+            <!-- C?t 4: Phuong th?c thanh toán & Ch?ng nh?n -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <h6>H? TR? THANH TOÁN</h6>
+                <div class="payment-badges">
+                    <span class="payment-badge">? QR hi?n th? s? ti?n</span>
+                </div>
+
+                <h6 class="mt-4">CH?NG NH?N CHÍNH HÃNG</h6>
+                <div class="d-flex align-items-center gap-2 mt-2">
+                    <span class="badge bg-success p-2">? ÐÃ THÔNG BÁO B? CÔNG THUONG</span>
+                </div>
+                <div class="mt-2 text-muted small">
+                    H? th?ng bán l? di?n tho?i, laptop, ph? ki?n chính hãng giá t?t.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fpt-footer-sub mt-4">
+        <div class="container">
+            <p class="mb-1">© 2026 SBCB Shop · H? th?ng bán l? k? thu?t s? & di?n tho?i cao c?p · Ð? án CNPM-DAU · 24CT1-TRANVIETCUONG</p>
+            <p class="mb-0 text-muted">Ð?a ch?: H? th?ng c?a hàng SBCB Shop toàn qu?c · Email: support@sbcbshop.vn</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+{% if messages %}
+<script>
+    {% for message in messages %}
+        {% if "confetti" in message.tags %}
+        (function () {
+            var duration = 2.5 * 1000;
+            var end = Date.now() + duration;
+            var colors = ['#cb1c22', '#ff4d4f', '#ffd43b'];
+            (function frame() {
+                confetti({ particleCount: 4, angle: 60, spread: 60, origin: { x: 0 }, colors: colors });
+                confetti({ particleCount: 4, angle: 120, spread: 60, origin: { x: 1 }, colors: colors });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            })();
+            confetti({ particleCount: 120, spread: 100, origin: { y: 0.4 }, colors: colors });
+        })();
+        {% endif %}
+    {% endfor %}
+</script>
+{% endif %}
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

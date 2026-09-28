@@ -1,0 +1,43 @@
+{% extends "shop/base.html" %}
+{% block title %}Hỗ trợ - SBCB{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="bg-white rounded shadow-sm p-4">
+            <h4 class="mb-3">Gửi yêu cầu hỗ trợ</h4>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-sbcb w-100">Gửi yêu cầu</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <h4 class="mb-3">Yêu cầu của bạn</h4>
+        {% for r in my_requests %}
+        <div class="bg-white rounded shadow-sm p-3 mb-3">
+            <div class="d-flex justify-content-between">
+                <strong>{{ r.subject }}</strong>
+                {% if r.status == "open" %}
+                    <span class="badge bg-warning text-dark">Đang chờ</span>
+                {% else %}
+                    <span class="badge bg-success">Đã xử lý</span>
+                {% endif %}
+            </div>
+            <p class="mb-1 mt-2">{{ r.message }}</p>
+            {% if r.staff_reply %}
+                <div class="alert alert-light border mt-2 mb-0"><strong>Phản hồi:</strong> {{ r.staff_reply }}</div>
+            {% endif %}
+            <p class="text-muted small mb-0 mt-2">{{ r.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        {% empty %}
+        <p class="text-muted">Bạn chưa gửi yêu cầu hỗ trợ nào.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

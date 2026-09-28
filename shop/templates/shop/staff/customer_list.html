@@ -1,0 +1,26 @@
+{% extends "shop/base.html" %}
+{% block title %}Thông tin khách hàng - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">🧑‍🤝‍🧑 Danh sách khách hàng</h3>
+
+<div class="table-responsive">
+<table class="table bg-white rounded shadow-sm align-middle">
+    <thead>
+        <tr><th>Tài khoản</th><th>Email</th><th>SĐT</th><th>Ngày tham gia</th><th></th></tr>
+    </thead>
+    <tbody>
+        {% for c in customers %}
+        <tr>
+            <td>{{ c.username }}</td>
+            <td>{{ c.email|default:"—" }}</td>
+            <td>{{ c.profile.phone|default:"—" }}</td>
+            <td>{{ c.date_joined|date:"d/m/Y" }}</td>
+            <td><a href="{% url 'shop:staff_customer_detail' c.id %}" class="btn btn-sm btn-outline-primary">Xem chi tiết</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-muted text-center">Chưa có khách hàng nào.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

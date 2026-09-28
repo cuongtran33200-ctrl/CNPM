@@ -1,0 +1,38 @@
+{% extends "shop/base.html" %}`n{% load shop_filters %}
+{% block title %}Khách hàng {{ customer.username }} - SBCB{% endblock %}
+{% block content %}
+<h3 class="mb-3">Thông tin khách hàng: {{ customer.username }}</h3>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="bg-white rounded shadow-sm p-3">
+            <p class="mb-1"><strong>Họ tên:</strong> {{ customer.first_name|default:"—" }}</p>
+            <p class="mb-1"><strong>Email:</strong> {{ customer.email|default:"—" }}</p>
+            <p class="mb-1"><strong>Điện thoại:</strong> {{ customer.profile.phone|default:"—" }}</p>
+            <p class="mb-1"><strong>Địa chỉ:</strong> {{ customer.profile.address|default:"—" }}</p>
+            <p class="mb-0"><strong>Ngày tham gia:</strong> {{ customer.date_joined|date:"d/m/Y" }}</p>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="bg-white rounded shadow-sm p-3">
+            <h5>Lịch sử đơn hàng ({{ orders|length }})</h5>
+            <table class="table table-sm">
+                <thead><tr><th>Mã đơn</th><th>Ngày</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
+                <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><a href="{% url 'shop:staff_order_detail' order.id %}">#{{ order.id }}</a></td>
+                    <td>{{ order.created_at|date:"d/m/Y" }}</td>
+                    <td>{{ order.total_price|vnd }}₫</td>
+                    <td><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-muted">Chưa có đơn hàng.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<a href="{% url 'shop:staff_customer_list' %}" class="btn btn-outline-secondary mt-4">← Quay lại danh sách</a>
+{% endblock %}
