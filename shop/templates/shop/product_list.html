@@ -1,459 +1,959 @@
 {% extends "shop/base.html" %}
 {% load shop_filters %}
 {% load static %}
-{% block title %}{% if category %}{{ category.name }} ch�nh h�ng - {% elif query %}T�m ki?m: {{ query }} - {% endif %}SBCB Shop - �i?n tho?i, Laptop, Ph? ki?n{% endblock %}
+
+{% block title %}
+{% if category %}{{ category.name }} chính hãng - {% elif query %}Tìm kiếm: {{ query }} - {% endif %}
+SBCB Shop - Điện thoại, Laptop, Phụ kiện
+{% endblock %}
 
 {% block content %}
 
 {% if not category and not query %}
-<!-- =========================================================================
-     1. HOMEPAGE HERO SECTION: 3 C?T �?C TRUNG FPT SHOP (CHI?U CAO �?NG B? 350PX)
-     ========================================================================= -->
+
+<!-- HERO -->
 <section class="fpt-hero-wrap">
     <div class="row g-3">
-        <!-- C?t tr�i: Sidebar Menu danh m?c -->
+
+        <!-- SIDEBAR -->
         <div class="col-lg-3 d-none d-lg-block">
             <div class="fpt-category-sidebar">
-                <div class="sidebar-heading">?? DANH M?C S?N PH?M</div>
+
+                <div class="sidebar-heading"> DANH MỤC SẢN PHẨM</div>
+
                 <a href="{% url 'shop:product_list' %}" class="fpt-cat-item active">
-                    <span><span class="cat-icon">??</span> T?t c? s?n ph?m</span>
-                    <span class="chevron">�</span>
+                    <span>📱 Tất cả sản phẩm</span>
+                    <span class="chevron">›</span>
                 </a>
+
                 {% for c in categories %}
                 <a href="{{ c.get_absolute_url }}" class="fpt-cat-item">
                     <span>
                         <span class="cat-icon">
-                            {% if 'tho?i' in c.name|lower or 'thoai' in c.name|lower or 'phone' in c.name|lower %}??
-                            {% elif 'laptop' in c.name|lower %}??
-                            {% elif 'tai nghe' in c.name|lower or 'nghe' in c.name|lower or 'airpod' in c.name|lower %}??
-                            {% elif 's?c' in c.name|lower or 'ph?' in c.name|lower or 'sac' in c.name|lower %}?
-                            {% elif 'd?ng h?' in c.name|lower or 'd?ng' in c.name|lower or 'watch' in c.name|lower %}?
-                            {% else %}???{% endif %}
+                            {% if 'thoại' in c.name|lower or 'thoai' in c.name|lower or 'phone' in c.name|lower %}
+                                📱
+                            {% elif 'laptop' in c.name|lower %}
+                                💻
+                            {% elif 'tai nghe' in c.name|lower or 'nghe' in c.name|lower or 'airpod' in c.name|lower %}
+                                🎧
+                            {% elif 'sạc' in c.name|lower or 'phụ' in c.name|lower or 'sac' in c.name|lower %}
+                                🔌
+                            {% elif 'đồng hồ' in c.name|lower or 'đồng' in c.name|lower or 'watch' in c.name|lower %}
+                                ⌚
+                            {% else %}
+                                📦
+                            {% endif %}
                         </span>
+
                         {{ c.name }}
                     </span>
-                    <span class="chevron">�</span>
+
+                    <span class="chevron">›</span>
                 </a>
                 {% endfor %}
+
                 <a href="{% url 'shop:product_list' %}?q=Apple" class="fpt-cat-item">
-                    <span><span class="cat-icon">??</span> Chuy�n trang Apple</span>
-                    <span class="chevron">�</span>
+                    <span>🍎 Chuyên trang Apple</span>
+                    <span class="chevron">›</span>
                 </a>
+
                 <a href="{% url 'shop:product_list' %}?q=Samsung" class="fpt-cat-item">
-                    <span><span class="cat-icon">?</span> Chuy�n trang Samsung</span>
-                    <span class="chevron">�</span>
+                    <span>📱 Chuyên trang Samsung</span>
+                    <span class="chevron">›</span>
                 </a>
+
             </div>
         </div>
 
-        <!-- C?t gi?a: Banner Carousel chuy?n d?ng -->
+        <!-- BANNER -->
         <div class="col-12 col-lg-6">
-            <div id="fptHeroCarousel" class="carousel slide fpt-carousel" data-bs-ride="carousel" data-bs-interval="4000">
+            <div id="fptHeroCarousel"
+                 class="carousel slide fpt-carousel"
+                 data-bs-ride="carousel"
+                 data-bs-interval="4000">
+
                 <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#fptHeroCarousel" data-bs-slide-to="0" class="active"></button>
-                    <button type="button" data-bs-target="#fptHeroCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#fptHeroCarousel" data-bs-slide-to="2"></button>
+                    <button type="button" data-bs-target="#fptHeroCarousel"
+                            data-bs-slide-to="0" class="active"></button>
+
+                    <button type="button" data-bs-target="#fptHeroCarousel"
+                            data-bs-slide-to="1"></button>
+
+                    <button type="button" data-bs-target="#fptHeroCarousel"
+                            data-bs-slide-to="2"></button>
                 </div>
+
                 <div class="carousel-inner">
-                    <!-- Slide 1: Thu Cu Doi Moi -->
+
                     <div class="carousel-item active">
                         <a href="{% url 'shop:product_list' %}" class="d-block">
-                            <img src="{% static 'shop/img/banner1.jpg' %}" alt="Thu Cu Doi Moi - SBCB Shop" class="fpt-banner-img">
+                            <img src="{% static 'shop/img/banner1.jpg' %}"
+                                 alt="Thu cũ đổi mới - SBCB Shop"
+                                 class="fpt-banner-img">
                         </a>
                     </div>
-                    <!-- Slide 2: iPhone 18 Pro Max -->
+
                     <div class="carousel-item">
                         <a href="{% url 'shop:product_list' %}?q=iPhone" class="d-block">
-                            <img src="{% static 'shop/img/banner2.jpg' %}" alt="iPhone 18 Pro Max - SBCB Shop" class="fpt-banner-img">
+                            <img src="{% static 'shop/img/banner2.jpg' %}"
+                                 alt="iPhone - SBCB Shop"
+                                 class="fpt-banner-img">
                         </a>
                     </div>
-                    <!-- Slide 3: iPhone 18 Pro -->
+
                     <div class="carousel-item">
                         <a href="{% url 'shop:product_list' %}?q=iPhone" class="d-block">
-                            <img src="{% static 'shop/img/banner3.png' %}" alt="iPhone 18 Pro - Pro hon han" class="fpt-banner-img">
+                            <img src="{% static 'shop/img/banner3.png' %}"
+                                 alt="iPhone Pro"
+                                 class="fpt-banner-img">
                         </a>
                     </div>
+
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#fptHeroCarousel" data-bs-slide="prev">
+
+                <button class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#fptHeroCarousel"
+                        data-bs-slide="prev">
                     <span class="carousel-control-prev-icon"></span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#fptHeroCarousel" data-bs-slide="next">
+
+                <button class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#fptHeroCarousel"
+                        data-bs-slide="next">
                     <span class="carousel-control-next-icon"></span>
                 </button>
+
             </div>
         </div>
 
-        <!-- C?t ph?i: 2 Banner ph? x?p t?ng -->
+        <!-- RIGHT BANNERS -->
         <div class="col-12 col-lg-3">
             <div class="fpt-right-banners">
+
                 <div class="fpt-mini-banner banner-theme-red">
-                    <span class="mini-tag">?? THU CU �?I M?I</span>
-                    <h5>L�n �?i Flagship Tr? Gi� 3.000.000?</h5>
-                    <p>�?nh gi� m�y cu nhanh ch�ng, h? tr? thu m?i t�nh tr?ng.</p>
-                    <a href="{% url 'shop:product_list' %}" class="mini-btn">T�m hi?u th�m ?</a>
+                    <span class="mini-tag">🔥 THU CŨ ĐỔI MỚI</span>
+
+                    <h5>Lên Đời Flagship Trợ Giá 3.000.000đ</h5>
+
+                    <p>
+                        Định giá máy cũ nhanh chóng,
+                        hỗ trợ thu mua mọi tình trạng.
+                    </p>
+
+                    <a href="{% url 'shop:product_list' %}"
+                       class="mini-btn">
+                        Tìm hiểu thêm →
+                    </a>
                 </div>
+
                 <div class="fpt-mini-banner banner-theme-blue">
-                    <span class="mini-tag">??? �?C QUY?N SBCB SHOP</span>
-                    <h5>B?o H�nh 1 �?i 1 Trong 30 Ng�y</h5>
-                    <p>Y�n t�m mua s?m t?i h? th?ng SBCB Shop tr�n to�n qu?c.</p>
-                    <a href="{% url 'shop:product_list' %}" class="mini-btn">Xem ch�nh s�ch ?</a>
+                    <span class="mini-tag">⭐ ĐỘC QUYỀN SBCB SHOP</span>
+
+                    <h5>Bảo Hành 1 Đổi 1 Trong 30 Ngày</h5>
+
+                    <p>
+                        Yên tâm mua sắm tại hệ thống SBCB Shop.
+                    </p>
+
+                    <a href="{% url 'shop:product_list' %}"
+                       class="mini-btn">
+                        Xem chính sách →
+                    </a>
                 </div>
+
             </div>
         </div>
+
     </div>
 </section>
 
-<!-- =========================================================================
-     2. KHU V?C "? GI? V�NG GI� S?C" (FLASH SALE FPT SHOP)
-     ========================================================================= -->
+
+<!-- FLASH SALE -->
 <section class="fpt-flash-sale">
+
     <div class="flash-sale-header">
+
         <div class="flash-sale-title">
-            <span class="flame-icon">?</span>
+            <span class="flame-icon">🔥</span>
+
             <div>
-                <h3>GI? V�NG GI� S?C</h3>
-                <small class="text-white-50">S? lu?ng c� h?n � C?p nh?t gi� m?i gi?</small>
+                <h3>GIỜ VÀNG GIÁ SỐC</h3>
+
+                <small class="text-white-50">
+                    Số lượng có hạn • Cập nhật giá mỗi giờ
+                </small>
             </div>
         </div>
+
         <div class="fpt-countdown">
-            <span class="timer-label">K?T TH�C TRONG:</span>
+
+            <span class="timer-label">
+                KẾT THÚC TRONG:
+            </span>
+
             <span class="time-box" id="flashHour">03</span>
             <span class="colon">:</span>
+
             <span class="time-box" id="flashMin">45</span>
             <span class="colon">:</span>
+
             <span class="time-box" id="flashSec">20</span>
+
         </div>
+
     </div>
+
 
     <div class="row g-3">
+
         {% for product in products|slice:":4" %}
+
         <div class="col-6 col-md-3">
+
             <div class="fpt-product-card">
+
                 <div class="fpt-card-ribbons">
+
                     <span class="ribbon-discount">
-                        {% if product.discount_percent %}-{{ product.discount_percent }}%{% else %}HOT SALE{% endif %}
+
+                        {% if product.discount_percent %}
+                            -{{ product.discount_percent }}%
+                        {% else %}
+                            HOT SALE
+                        {% endif %}
+
                     </span>
+
                 </div>
-                <a href="{{ product.get_absolute_url }}" class="fpt-product-img-box text-decoration-none">
+
+
+                <a href="{{ product.get_absolute_url }}"
+                   class="fpt-product-img-box text-decoration-none">
+
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+
+                        <img src="{{ product.image.url }}"
+                             alt="{{ product.name }}">
+
                     {% else %}
+
                         <div class="d-flex flex-column align-items-center justify-content-center text-center">
+
                             <span style="font-size: 2.8rem; line-height: 1;">
-                                {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}??
-                                {% elif 'lap' in product.category.name|lower %}??
-                                {% elif 'tai' in product.category.name|lower %}??
-                                {% elif 'sac' in product.category.name|lower or 'cap' in product.name|lower %}?
-                                {% elif 'dong' in product.category.name|lower or 'watch' in product.name|lower %}?
-                                {% else %}??{% endif %}
+
+                                {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}
+                                    📱
+                                {% elif 'lap' in product.category.name|lower %}
+                                    💻
+                                {% elif 'tai' in product.category.name|lower %}
+                                    🎧
+                                {% elif 'sac' in product.category.name|lower or 'cap' in product.name|lower %}
+                                    🔌
+                                {% elif 'dong' in product.category.name|lower or 'watch' in product.name|lower %}
+                                    ⌚
+                                {% else %}
+                                    📦
+                                {% endif %}
+
                             </span>
-                            <span class="badge bg-white text-muted border mt-2" style="font-size: 0.65rem;">SBCB Official</span>
+
+                            <span class="badge bg-white text-muted border mt-2"
+                                  style="font-size: 0.65rem;">
+                                SBCB Official
+                            </span>
+
                         </div>
+
                     {% endif %}
+
                 </a>
-                <a href="{{ product.get_absolute_url }}" class="fpt-product-title">{{ product.name }}</a>
+
+
+                <a href="{{ product.get_absolute_url }}"
+                   class="fpt-product-title">
+
+                    {{ product.name }}
+
+                </a>
+
 
                 <div class="fpt-price-wrap">
+
                     <div class="d-flex align-items-baseline flex-wrap">
-                        <span class="fpt-price-main">{{ product.price|vnd }}?</span>
+
+                        <span class="fpt-price-main">
+                            {{ product.price|vnd }}đ
+                        </span>
+
                         {% if product.compare_price %}
-                            <span class="fpt-price-old">{{ product.compare_price|vnd }}?</span>
+
+                            <span class="fpt-price-old">
+                                {{ product.compare_price|vnd }}đ
+                            </span>
+
                         {% endif %}
+
                     </div>
+
                 </div>
+
 
                 <div class="flash-progress-wrap">
+
                     <div class="flash-progress">
-                        <div class="flash-progress-bar" style="width: 82%;"></div>
-                        <span class="flash-progress-text">?? �� b�n 18/20</span>
+
+                        <div class="flash-progress-bar"
+                             style="width: 82%;">
+                        </div>
+
+                        <span class="flash-progress-text">
+                            🔥 Đã bán 18/20
+                        </span>
+
                     </div>
+
                 </div>
 
-                <a href="{{ product.get_absolute_url }}" class="btn-fpt-buy w-100 mt-2">SAN NGAY</a>
+
+                <a href="{{ product.get_absolute_url }}"
+                   class="btn-fpt-buy w-100 mt-2">
+
+                    SĂN NGAY
+
+                </a>
+
             </div>
+
         </div>
+
         {% endfor %}
+
     </div>
+
 </section>
+
 {% endif %}
 
 
-<!-- =========================================================================
-     3. DANH S�CH S?N PH?M / K?T QU? T�M KI?M
-     ========================================================================= -->
+<!-- DANH SÁCH / TÌM KIẾM -->
+
 {% if category or query %}
-<!-- B? c?c c� Sidebar khi dang l?c theo danh m?c ho?c t�m ki?m -->
+
 <div class="row g-4 mb-5">
-    <!-- C?t tr�i: Danh m?c s?n ph?m -->
+
+    <!-- SIDEBAR -->
     <div class="col-lg-3 d-none d-lg-block">
+
         <div class="fpt-category-sidebar h-auto">
-            <div class="sidebar-heading">?? DANH M?C S?N PH?M</div>
-            <a href="{% url 'shop:product_list' %}" class="fpt-cat-item {% if not category %}active{% endif %}">
-                <span>?? T?t c? s?n ph?m</span>
-                <span class="chevron">�</span>
+
+            <div class="sidebar-heading">
+                📦 DANH MỤC SẢN PHẨM
+            </div>
+
+
+            <a href="{% url 'shop:product_list' %}"
+               class="fpt-cat-item {% if not category %}active{% endif %}">
+
+                <span>📱 Tất cả sản phẩm</span>
+
+                <span class="chevron">›</span>
+
             </a>
+
+
             {% for c in categories %}
-            <a href="{{ c.get_absolute_url }}" class="fpt-cat-item {% if category.id == c.id %}active{% endif %}">
+
+            <a href="{{ c.get_absolute_url }}"
+               class="fpt-cat-item {% if category.id == c.id %}active{% endif %}">
+
                 <span>
+
                     <span class="cat-icon">
-                        {% if 'tho?i' in c.name|lower or 'thoai' in c.name|lower or 'phone' in c.name|lower %}??
-                        {% elif 'laptop' in c.name|lower %}??
-                        {% elif 'tai nghe' in c.name|lower or 'nghe' in c.name|lower or 'airpod' in c.name|lower %}??
-                        {% elif 's?c' in c.name|lower or 'ph?' in c.name|lower or 'sac' in c.name|lower %}?
-                        {% elif 'd?ng h?' in c.name|lower or 'd?ng' in c.name|lower or 'watch' in c.name|lower %}?
-                        {% else %}???{% endif %}
+
+                        {% if 'thoại' in c.name|lower or 'thoai' in c.name|lower or 'phone' in c.name|lower %}
+                            📱
+                        {% elif 'laptop' in c.name|lower %}
+                            💻
+                        {% elif 'tai nghe' in c.name|lower or 'nghe' in c.name|lower or 'airpod' in c.name|lower %}
+                            🎧
+                        {% elif 'sạc' in c.name|lower or 'phụ' in c.name|lower or 'sac' in c.name|lower %}
+                            🔌
+                        {% elif 'đồng hồ' in c.name|lower or 'đồng' in c.name|lower or 'watch' in c.name|lower %}
+                            ⌚
+                        {% else %}
+                            📦
+                        {% endif %}
+
                     </span>
+
                     {{ c.name }}
+
                 </span>
-                <span class="chevron">�</span>
+
+                <span class="chevron">›</span>
+
             </a>
+
             {% endfor %}
+
         </div>
+
     </div>
 
-    <!-- C?t ph?i: Grid s?n ph?m -->
+
+    <!-- PRODUCTS -->
     <div class="col-12 col-lg-9">
+
         <div class="fpt-section-header">
+
             <h2 class="fpt-section-title">
-                {% if query %}K?t qu? t�m ki?m: "{{ query }}"
-                {% elif category %}{{ category.name }}
-                {% else %}T?t c? s?n ph?m{% endif %}
-                <span class="text-muted fs-6 fw-normal">({{ products|length }} s?n ph?m)</span>
+
+                {% if query %}
+                    Kết quả tìm kiếm: "{{ query }}"
+                {% elif category %}
+                    {{ category.name }}
+                {% else %}
+                    Tất cả sản phẩm
+                {% endif %}
+
+                <span class="text-muted fs-6 fw-normal">
+                    ({{ products|length }} sản phẩm)
+                </span>
+
             </h2>
+
+
             <div class="fpt-brand-chips">
-                <a href="{% url 'shop:product_list' %}" class="brand-chip {% if not query and not category %}active{% endif %}">T?t c?</a>
-                <a href="{% url 'shop:product_list' %}?q=Apple" class="brand-chip {% if query == 'Apple' %}active{% endif %}">Apple</a>
-                <a href="{% url 'shop:product_list' %}?q=Samsung" class="brand-chip {% if query == 'Samsung' %}active{% endif %}">Samsung</a>
-                <a href="{% url 'shop:product_list' %}?q=Dell" class="brand-chip {% if query == 'Dell' %}active{% endif %}">Dell</a>
+
+                <a href="{% url 'shop:product_list' %}"
+                   class="brand-chip {% if not query and not category %}active{% endif %}">
+                    Tất cả
+                </a>
+
+                <a href="{% url 'shop:product_list' %}?q=Apple"
+                   class="brand-chip {% if query == 'Apple' %}active{% endif %}">
+                    Apple
+                </a>
+
+                <a href="{% url 'shop:product_list' %}?q=Samsung"
+                   class="brand-chip {% if query == 'Samsung' %}active{% endif %}">
+                    Samsung
+                </a>
+
+                <a href="{% url 'shop:product_list' %}?q=Dell"
+                   class="brand-chip {% if query == 'Dell' %}active{% endif %}">
+                    Dell
+                </a>
+
             </div>
+
         </div>
+
 
         <div class="row g-3">
+
             {% for product in products %}
+
             <div class="col-6 col-md-4">
+
                 <div class="fpt-product-card">
+
                     <div class="fpt-card-ribbons">
+
                         {% if product.discount_percent %}
-                            <span class="ribbon-discount">-{{ product.discount_percent }}%</span>
+
+                            <span class="ribbon-discount">
+                                -{{ product.discount_percent }}%
+                            </span>
+
                         {% endif %}
+
                     </div>
 
-                    <a href="{{ product.get_absolute_url }}" class="fpt-product-img-box text-decoration-none">
+
+                    <a href="{{ product.get_absolute_url }}"
+                       class="fpt-product-img-box text-decoration-none">
+
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+
+                            <img src="{{ product.image.url }}"
+                                 alt="{{ product.name }}"
+                                 loading="lazy">
+
                         {% else %}
+
                             <div class="d-flex flex-column align-items-center justify-content-center text-center">
+
                                 <span style="font-size: 2.8rem; line-height: 1;">
-                                    {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}??
-                                    {% elif 'lap' in product.category.name|lower %}??
-                                    {% elif 'tai' in product.category.name|lower %}??
-                                    {% elif 'sac' in product.category.name|lower or 'cap' in product.name|lower %}?
-                                    {% elif 'dong' in product.category.name|lower or 'watch' in product.name|lower %}?
-                                    {% else %}??{% endif %}
+
+                                    {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}
+                                        📱
+                                    {% elif 'lap' in product.category.name|lower %}
+                                        💻
+                                    {% elif 'tai' in product.category.name|lower %}
+                                        🎧
+                                    {% elif 'sac' in product.category.name|lower or 'cap' in product.name|lower %}
+                                        🔌
+                                    {% elif 'dong' in product.category.name|lower or 'watch' in product.name|lower %}
+                                        ⌚
+                                    {% else %}
+                                        📦
+                                    {% endif %}
+
                                 </span>
-                                <span class="badge bg-white text-muted border mt-2" style="font-size: 0.65rem;">SBCB Official</span>
+
+                                <span class="badge bg-white text-muted border mt-2"
+                                      style="font-size: 0.65rem;">
+                                    SBCB Official
+                                </span>
+
                             </div>
+
                         {% endif %}
+
                     </a>
 
-                    <a href="{{ product.get_absolute_url }}" class="fpt-product-title" title="{{ product.name }}">
+
+                    <a href="{{ product.get_absolute_url }}"
+                       class="fpt-product-title"
+                       title="{{ product.name }}">
+
                         {{ product.name }}
+
                     </a>
+
 
                     <div class="fpt-spec-pills">
+
                         {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}
+
                             <span class="spec-pill">6.7" OLED</span>
                             <span class="spec-pill">120Hz</span>
+
                         {% elif 'lap' in product.category.name|lower or 'macbook' in product.name|lower %}
+
                             <span class="spec-pill">RAM 16GB</span>
                             <span class="spec-pill">SSD 512GB</span>
+
                         {% elif 'tai' in product.category.name|lower or 'airpod' in product.name|lower %}
-                            <span class="spec-pill">Ch?ng ?n ANC</span>
+
+                            <span class="spec-pill">Chống ồn ANC</span>
                             <span class="spec-pill">Pin 30h</span>
+
                         {% else %}
-                            <span class="spec-pill">Ch�nh h�ng SBCB</span>
+
+                            <span class="spec-pill">
+                                Chính hãng SBCB
+                            </span>
+
                         {% endif %}
+
                     </div>
+
 
                     <div class="fpt-price-wrap">
+
                         <div class="d-flex align-items-baseline flex-wrap">
-                            <span class="fpt-price-main">{{ product.price|vnd }}?</span>
+
+                            <span class="fpt-price-main">
+                                {{ product.price|vnd }}đ
+                            </span>
+
                             {% if product.compare_price %}
-                                <span class="fpt-price-old">{{ product.compare_price|vnd }}?</span>
+
+                                <span class="fpt-price-old">
+                                    {{ product.compare_price|vnd }}đ
+                                </span>
+
                             {% endif %}
+
                         </div>
+
                     </div>
+
 
                     <div class="fpt-promo-tag">
-                        ?? T?ng c? s?c nhanh + Gi?m th�m 500.000d khi m? th?
+
+                        🎁 Tặng củ sạc nhanh + Giảm thêm 500.000đ khi mở thẻ
+
                     </div>
+
 
                     <div class="fpt-card-footer">
-                        <div class="fpt-card-rating">????? <span>(5.0)</span></div>
+
+                        <div class="fpt-card-rating">
+                            ⭐⭐⭐⭐⭐ <span>(5.0)</span>
+                        </div>
+
+
                         {% if product.in_stock %}
-                            <a href="{{ product.get_absolute_url }}" class="btn-fpt-buy">Mua ngay</a>
+
+                            <a href="{{ product.get_absolute_url }}"
+                               class="btn-fpt-buy">
+                                Mua ngay
+                            </a>
+
                         {% else %}
-                            <span class="badge bg-secondary p-1">H?t h�ng</span>
+
+                            <span class="badge bg-secondary p-1">
+                                Hết hàng
+                            </span>
+
                         {% endif %}
+
                     </div>
+
                 </div>
+
             </div>
+
+
             {% empty %}
+
             <div class="col-12 py-5 text-center">
+
                 <div class="p-5 bg-white rounded shadow-sm border">
-                    <span style="font-size: 3.5rem;">??</span>
-                    <h4 class="mt-3 fw-bold">Kh�ng t�m th?y s?n ph?m ph� h?p</h4>
-                    <p class="text-muted">H�y th? t�m ki?m v?i t? kh�a kh�c.</p>
-                    <a href="{% url 'shop:product_list' %}" class="btn btn-fpt-buy mt-2 px-4 py-2">Quay l?i danh m?c</a>
+
+                    <span style="font-size: 3.5rem;">🔍</span>
+
+                    <h4 class="mt-3 fw-bold">
+                        Không tìm thấy sản phẩm phù hợp
+                    </h4>
+
+                    <p class="text-muted">
+                        Hãy thử tìm kiếm với từ khóa khác.
+                    </p>
+
+                    <a href="{% url 'shop:product_list' %}"
+                       class="btn btn-fpt-buy mt-2 px-4 py-2">
+                        Quay lại danh mục
+                    </a>
+
                 </div>
+
             </div>
+
             {% endfor %}
+
         </div>
+
     </div>
+
 </div>
 
+
 {% else %}
-<!-- Trang ch? hi?n th? d?y d? 4 c?t Grid -->
+
+<!-- TRANG CHỦ - SẢN PHẨM NỔI BẬT -->
+
 <section class="mb-5">
+
     <div class="fpt-section-header">
+
         <h2 class="fpt-section-title">
-            S?N PH?M N?I B?T NH?T
-            <span class="text-muted fs-6 fw-normal">({{ products|length }} s?n ph?m)</span>
+
+            SẢN PHẨM NỔI BẬT NHẤT
+
+            <span class="text-muted fs-6 fw-normal">
+                ({{ products|length }} sản phẩm)
+            </span>
+
         </h2>
 
-        <!-- Brand Filter Pills -->
+
         <div class="fpt-brand-chips">
-            <a href="{% url 'shop:product_list' %}" class="brand-chip active">T?t c?</a>
-            <a href="{% url 'shop:product_list' %}?q=Apple" class="brand-chip">Apple</a>
-            <a href="{% url 'shop:product_list' %}?q=Samsung" class="brand-chip">Samsung Galaxy</a>
-            <a href="{% url 'shop:product_list' %}?q=Xiaomi" class="brand-chip">Xiaomi</a>
-            <a href="{% url 'shop:product_list' %}?q=Dell" class="brand-chip">Dell</a>
-            <a href="{% url 'shop:product_list' %}?q=Asus" class="brand-chip">ASUS</a>
-            <a href="{% url 'shop:product_list' %}?q=Anker" class="brand-chip">Anker</a>
-            <a href="{% url 'shop:product_list' %}?q=Sony" class="brand-chip">Sony</a>
+
+            <a href="{% url 'shop:product_list' %}"
+               class="brand-chip active">
+                Tất cả
+            </a>
+
+            <a href="{% url 'shop:product_list' %}?q=Apple"
+               class="brand-chip">
+                Apple
+            </a>
+
+            <a href="{% url 'shop:product_list' %}?q=Samsung"
+               class="brand-chip">
+                Samsung Galaxy
+            </a>
+
+            <a href="{% url 'shop:product_list' %}?q=Xiaomi"
+               class="brand-chip">
+                Xiaomi
+            </a>
+
+            <a href="{% url 'shop:product_list' %}?q=Dell"
+               class="brand-chip">
+                Dell
+            </a>
+
+            <a href="{% url 'shop:product_list' %}?q=Asus"
+               class="brand-chip">
+                ASUS
+            </a>
+
+            <a href="{% url 'shop:product_list' %}?q=Anker"
+               class="brand-chip">
+                Anker
+            </a>
+
+            <a href="{% url 'shop:product_list' %}?q=Sony"
+               class="brand-chip">
+                Sony
+            </a>
+
         </div>
+
     </div>
 
+
     <div class="row g-3">
+
         {% for product in products %}
+
         <div class="col-6 col-md-4 col-lg-3">
+
             <div class="fpt-product-card">
+
                 <div class="fpt-card-ribbons">
+
                     {% if product.discount_percent %}
-                        <span class="ribbon-discount">-{{ product.discount_percent }}%</span>
+
+                        <span class="ribbon-discount">
+                            -{{ product.discount_percent }}%
+                        </span>
+
                     {% endif %}
+
                 </div>
 
-                <a href="{{ product.get_absolute_url }}" class="fpt-product-img-box text-decoration-none">
+
+                <a href="{{ product.get_absolute_url }}"
+                   class="fpt-product-img-box text-decoration-none">
+
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+
+                        <img src="{{ product.image.url }}"
+                             alt="{{ product.name }}"
+                             loading="lazy">
+
                     {% else %}
+
                         <div class="d-flex flex-column align-items-center justify-content-center text-center">
+
                             <span style="font-size: 2.8rem; line-height: 1;">
-                                {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}??
-                                {% elif 'lap' in product.category.name|lower %}??
-                                {% elif 'tai' in product.category.name|lower %}??
-                                {% elif 'sac' in product.category.name|lower or 'cap' in product.name|lower %}?
-                                {% elif 'dong' in product.category.name|lower or 'watch' in product.name|lower %}?
-                                {% else %}??{% endif %}
+
+                                {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}
+                                    📱
+                                {% elif 'lap' in product.category.name|lower %}
+                                    💻
+                                {% elif 'tai' in product.category.name|lower %}
+                                    🎧
+                                {% elif 'sac' in product.category.name|lower or 'cap' in product.name|lower %}
+                                    🔌
+                                {% elif 'dong' in product.category.name|lower or 'watch' in product.name|lower %}
+                                    ⌚
+                                {% else %}
+                                    📦
+                                {% endif %}
+
                             </span>
-                            <span class="badge bg-white text-muted border mt-2" style="font-size: 0.65rem;">SBCB Official</span>
+
+                            <span class="badge bg-white text-muted border mt-2"
+                                  style="font-size: 0.65rem;">
+                                SBCB Official
+                            </span>
+
                         </div>
+
                     {% endif %}
+
                 </a>
 
-                <a href="{{ product.get_absolute_url }}" class="fpt-product-title" title="{{ product.name }}">
+
+                <a href="{{ product.get_absolute_url }}"
+                   class="fpt-product-title"
+                   title="{{ product.name }}">
+
                     {{ product.name }}
+
                 </a>
+
 
                 <div class="fpt-spec-pills">
+
                     {% if 'thoai' in product.category.name|lower or 'iphone' in product.name|lower or 'galaxy' in product.name|lower %}
+
                         <span class="spec-pill">6.7" OLED</span>
                         <span class="spec-pill">120Hz</span>
                         <span class="spec-pill">Pin 5000mAh</span>
+
                     {% elif 'lap' in product.category.name|lower or 'macbook' in product.name|lower or 'dell' in product.name|lower %}
+
                         <span class="spec-pill">RAM 16GB</span>
                         <span class="spec-pill">SSD 512GB</span>
-                        <span class="spec-pill">M�n 2K</span>
+                        <span class="spec-pill">Màn 2K</span>
+
                     {% elif 'tai' in product.category.name|lower or 'airpod' in product.name|lower or 'sony' in product.name|lower %}
-                        <span class="spec-pill">Ch?ng ?n ANC</span>
-                        <span class="spec-pill">Pin 30 gi?</span>
+
+                        <span class="spec-pill">Chống ồn ANC</span>
+                        <span class="spec-pill">Pin 30 giờ</span>
+
                     {% elif 'sac' in product.category.name|lower or 'cap' in product.name|lower %}
-                        <span class="spec-pill">S?c nhanh GaN</span>
-                        <span class="spec-pill">Ch�nh h�ng 100%</span>
+
+                        <span class="spec-pill">Sạc nhanh GaN</span>
+                        <span class="spec-pill">Chính hãng 100%</span>
+
                     {% elif 'dong' in product.category.name|lower or 'watch' in product.name|lower %}
-                        <span class="spec-pill">�o ECG</span>
-                        <span class="spec-pill">Ch?ng nu?c 5ATM</span>
+
+                        <span class="spec-pill">Đo ECG</span>
+                        <span class="spec-pill">Chống nước 5ATM</span>
+
                     {% else %}
-                        <span class="spec-pill">Ch�nh h�ng SBCB</span>
+
+                        <span class="spec-pill">
+                            Chính hãng SBCB
+                        </span>
+
                     {% endif %}
+
                 </div>
+
 
                 <div class="fpt-price-wrap">
+
                     <div class="d-flex align-items-baseline flex-wrap">
-                        <span class="fpt-price-main">{{ product.price|vnd }}?</span>
+
+                        <span class="fpt-price-main">
+                            {{ product.price|vnd }}đ
+                        </span>
+
                         {% if product.compare_price %}
-                            <span class="fpt-price-old">{{ product.compare_price|vnd }}?</span>
+
+                            <span class="fpt-price-old">
+                                {{ product.compare_price|vnd }}đ
+                            </span>
+
                         {% endif %}
+
                     </div>
+
                 </div>
+
 
                 <div class="fpt-promo-tag">
-                    ?? T?ng c? s?c nhanh + Gi?m th�m 500.000d khi m? th?
+
+                    🎁 Tặng củ sạc nhanh + Giảm thêm 500.000đ khi mở thẻ
+
                 </div>
 
+
                 <div class="fpt-card-footer">
-                    <div class="fpt-card-rating">????? <span>(5.0)</span></div>
+
+                    <div class="fpt-card-rating">
+                        ⭐⭐⭐⭐⭐ <span>(5.0)</span>
+                    </div>
+
+
                     {% if product.in_stock %}
-                        <a href="{{ product.get_absolute_url }}" class="btn-fpt-buy">Mua ngay</a>
+
+                        <a href="{{ product.get_absolute_url }}"
+                           class="btn-fpt-buy">
+                            Mua ngay
+                        </a>
+
                     {% else %}
-                        <span class="badge bg-secondary p-1">H?t h�ng</span>
+
+                        <span class="badge bg-secondary p-1">
+                            Hết hàng
+                        </span>
+
                     {% endif %}
+
                 </div>
+
             </div>
+
         </div>
+
+
         {% empty %}
+
         <div class="col-12 py-5 text-center">
+
             <div class="p-5 bg-white rounded shadow-sm border">
-                <span style="font-size: 3.5rem;">??</span>
-                <h4 class="mt-3 fw-bold">Kh�ng t�m th?y s?n ph?m ph� h?p</h4>
-                <p class="text-muted">H�y th? t�m ki?m v?i t? kh�a kh�c.</p>
-                <a href="{% url 'shop:product_list' %}" class="btn btn-fpt-buy mt-2 px-4 py-2">Quay l?i danh m?c</a>
+
+                <span style="font-size: 3.5rem;">🔍</span>
+
+                <h4 class="mt-3 fw-bold">
+                    Không tìm thấy sản phẩm phù hợp
+                </h4>
+
+                <p class="text-muted">
+                    Hãy thử tìm kiếm với từ khóa khác.
+                </p>
+
+                <a href="{% url 'shop:product_list' %}"
+                   class="btn btn-fpt-buy mt-2 px-4 py-2">
+                    Quay lại danh mục
+                </a>
+
             </div>
+
         </div>
+
         {% endfor %}
+
     </div>
+
 </section>
+
 {% endif %}
 
 {% endblock %}
 
+
 {% block extra_js %}
+
 <script>
-    // Live Countdown Timer for Flash Sale
-    (function () {
-        var hourEl = document.getElementById('flashHour');
-        var minEl = document.getElementById('flashMin');
-        var secEl = document.getElementById('flashSec');
-        if (!hourEl || !minEl || !secEl) return;
 
-        var totalSeconds = 3 * 3600 + 45 * 60 + 20;
+(function () {
 
-        function updateTimer() {
-            if (totalSeconds <= 0) {
-                totalSeconds = 4 * 3600;
-            }
-            totalSeconds--;
-            var h = Math.floor(totalSeconds / 3600);
-            var m = Math.floor((totalSeconds % 3600) / 60);
-            var s = totalSeconds % 60;
+    var hourEl = document.getElementById('flashHour');
+    var minEl = document.getElementById('flashMin');
+    var secEl = document.getElementById('flashSec');
 
-            hourEl.textContent = (h < 10 ? '0' : '') + h;
-            minEl.textContent = (m < 10 ? '0' : '') + m;
-            secEl.textContent = (s < 10 ? '0' : '') + s;
+    if (!hourEl || !minEl || !secEl) {
+        return;
+    }
+
+    var totalSeconds = 3 * 3600 + 45 * 60 + 20;
+
+    function updateTimer() {
+
+        if (totalSeconds <= 0) {
+            totalSeconds = 4 * 3600;
         }
 
-        setInterval(updateTimer, 1000);
-    })();
+        totalSeconds--;
+
+        var h = Math.floor(totalSeconds / 3600);
+        var m = Math.floor((totalSeconds % 3600) / 60);
+        var s = totalSeconds % 60;
+
+        hourEl.textContent = (h < 10 ? '0' : '') + h;
+        minEl.textContent = (m < 10 ? '0' : '') + m;
+        secEl.textContent = (s < 10 ? '0' : '') + s;
+
+    }
+
+    setInterval(updateTimer, 1000);
+
+})();
+
 </script>
+
 {% endblock %}
