@@ -3,22 +3,41 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from cloudinary.models import CloudinaryField
 
 
 class Profile(models.Model):
     ROLE_CUSTOMER = "customer"
     ROLE_STAFF = "staff"
     ROLE_ADMIN = "admin"
+
     ROLE_CHOICES = [
         (ROLE_CUSTOMER, "Khách hàng"),
         (ROLE_STAFF, "Nhân viên"),
         (ROLE_ADMIN, "Quản trị viên"),
     ]
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
-    role = models.CharField("Vai trò", max_length=20, choices=ROLE_CHOICES, default=ROLE_CUSTOMER)
-    phone = models.CharField("Số điện thoại", max_length=20, blank=True)
-    address = models.CharField("Địa chỉ", max_length=255, blank=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="profile"
+    )
+    role = models.CharField(
+        "Vai trò",
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default=ROLE_CUSTOMER
+    )
+    phone = models.CharField(
+        "Số điện thoại",
+        max_length=20,
+        blank=True
+    )
+    address = models.CharField(
+        "Địa chỉ",
+        max_length=255,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Hồ sơ người dùng"
@@ -29,7 +48,10 @@ class Profile(models.Model):
 
     @property
     def is_staff_role(self):
-        return self.role in (self.ROLE_STAFF, self.ROLE_ADMIN) or self.user.is_superuser
+        return (
+            self.role in (self.ROLE_STAFF, self.ROLE_ADMIN)
+            or self.user.is_superuser
+        )
 
     @property
     def is_admin_role(self):
@@ -41,7 +63,13 @@ def create_or_update_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.get_or_create(
             user=instance,
-            defaults={"role": Profile.ROLE_ADMIN if instance.is_superuser else Profile.ROLE_CUSTOMER},
+            defaults={
+                "role": (
+                    Profile.ROLE_ADMIN
+                    if instance.is_superuser
+                    else Profile.ROLE_CUSTOMER
+                )
+            },
         )
     else:
         Profile.objects.get_or_create(user=instance)
@@ -60,28 +88,79 @@ class Category(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("shop:product_list_by_category", args=[self.slug])
+        return reverse(
+            "shop:product_list_by_category",
+            args=[self.slug]
+        )
 
 
 class Product(models.Model):
     category = models.ForeignKey(
-        Category, related_name="products", on_delete=models.CASCADE,
+        Category,
+        related_name="products",
+        on_delete=models.CASCADE,
         verbose_name="Danh mục",
     )
-    name = models.CharField("Tên sản phẩm", max_length=200)
-    slug = models.SlugField(max_length=220, unique=True)
-    description = models.TextField("Mô tả", blank=True)
-    image = models.ImageField("Hình ảnh", upload_to="products/%Y/%m/", blank=True, null=True)
-    price = models.DecimalField("Giá (đ)", max_digits=12, decimal_places=0)
-    stock = models.PositiveIntegerField("Tồn kho", default=0)
-    low_stock_threshold = models.PositiveIntegerField("Ngưỡng cảnh báo sắp hết", default=5)
+
+    name = models.CharField(
+        "Tên sản phẩm",
+        max_length=200
+    )
+
+    slug = models.SlugField(
+        max_length=220,
+        unique=True
+    )
+
+    description = models.TextField(
+        "Mô tả",
+        blank=True
+    )
+
+    image = CloudinaryField(
+        "Hình ảnh",
+        folder="shop-sbcb/products",
+        blank=True,
+        null=True
+    )
+
+    price = models.DecimalField(
+        "Giá (đ)",
+        max_digits=12,
+        decimal_places=0
+    )
+
+    stock = models.PositiveIntegerField(
+        "Tồn kho",
+        default=0
+    )
+
+    low_stock_threshold = models.PositiveIntegerField(
+        "Ngưỡng cảnh báo sắp hết",
+        default=5
+    )
+
     compare_price = models.DecimalField(
-        "Giá gốc (trước giảm)", max_digits=12, decimal_places=0, blank=True, null=True,
+        "Giá gốc (trước giảm)",
+        max_digits=12,
+        decimal_places=0,
+        blank=True,
+        null=True,
         help_text="Để trống nếu sản phẩm không giảm giá",
     )
-    is_active = models.BooleanField("Đang bán", default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
+    is_active = models.BooleanField(
+        "Đang bán",
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
 
     class Meta:
         verbose_name = "Sản phẩm"
@@ -92,7 +171,10 @@ class Product(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("shop:product_detail", args=[self.slug])
+        return reverse(
+            "shop:product_detail",
+            args=[self.slug]
+        )
 
     @property
     def in_stock(self):
@@ -105,14 +187,22 @@ class Product(models.Model):
     @property
     def average_rating(self):
         reviews = self.reviews.all()
+
         if not reviews:
             return None
-        return round(sum(r.rating for r in reviews) / len(reviews), 1)
+
+        return round(
+            sum(r.rating for r in reviews) / len(reviews),
+            1
+        )
 
     @property
     def discount_percent(self):
         if self.compare_price and self.compare_price > self.price:
-            return round((1 - (self.price / self.compare_price)) * 100)
+            return round(
+                (1 - (self.price / self.compare_price)) * 100
+            )
+
         return 0
 
 
@@ -122,6 +212,7 @@ class Order(models.Model):
     STATUS_SHIPPING = "shipping"
     STATUS_COMPLETED = "completed"
     STATUS_CANCELLED = "cancelled"
+
     STATUS_CHOICES = [
         (STATUS_PENDING, "Chờ xác nhận"),
         (STATUS_CONFIRMED, "Đã xác nhận"),
@@ -131,16 +222,45 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="orders",
-        on_delete=models.CASCADE, verbose_name="Khách hàng",
+        settings.AUTH_USER_MODEL,
+        related_name="orders",
+        on_delete=models.CASCADE,
+        verbose_name="Khách hàng",
     )
-    full_name = models.CharField("Họ tên người nhận", max_length=150)
-    phone = models.CharField("Số điện thoại", max_length=20)
-    address = models.CharField("Địa chỉ giao hàng", max_length=255)
-    note = models.TextField("Ghi chú", blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
+    full_name = models.CharField(
+        "Họ tên người nhận",
+        max_length=150
+    )
+
+    phone = models.CharField(
+        "Số điện thoại",
+        max_length=20
+    )
+
+    address = models.CharField(
+        "Địa chỉ giao hàng",
+        max_length=255
+    )
+
+    note = models.TextField(
+        "Ghi chú",
+        blank=True
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
 
     class Meta:
         verbose_name = "Đơn hàng"
@@ -152,18 +272,42 @@ class Order(models.Model):
 
     @property
     def total_price(self):
-        return sum(item.subtotal for item in self.items.all())
+        return sum(
+            item.subtotal
+            for item in self.items.all()
+        )
 
     @property
     def total_items(self):
-        return sum(item.quantity for item in self.items.all())
+        return sum(
+            item.quantity
+            for item in self.items.all()
+        )
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name="order_items", on_delete=models.PROTECT)
-    price = models.DecimalField("Đơn giá tại thời điểm mua", max_digits=12, decimal_places=0)
-    quantity = models.PositiveIntegerField("Số lượng", default=1)
+    order = models.ForeignKey(
+        Order,
+        related_name="items",
+        on_delete=models.CASCADE
+    )
+
+    product = models.ForeignKey(
+        Product,
+        related_name="order_items",
+        on_delete=models.PROTECT
+    )
+
+    price = models.DecimalField(
+        "Đơn giá tại thời điểm mua",
+        max_digits=12,
+        decimal_places=0
+    )
+
+    quantity = models.PositiveIntegerField(
+        "Số lượng",
+        default=1
+    )
 
     class Meta:
         verbose_name = "Sản phẩm trong đơn"
@@ -178,11 +322,31 @@ class OrderItem(models.Model):
 
 
 class Review(models.Model):
-    product = models.ForeignKey(Product, related_name="reviews", on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="reviews", on_delete=models.CASCADE)
-    rating = models.PositiveSmallIntegerField("Số sao (1-5)", default=5)
-    comment = models.TextField("Nhận xét", blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey(
+        Product,
+        related_name="reviews",
+        on_delete=models.CASCADE
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="reviews",
+        on_delete=models.CASCADE
+    )
+
+    rating = models.PositiveSmallIntegerField(
+        "Số sao (1-5)",
+        default=5
+    )
+
+    comment = models.TextField(
+        "Nhận xét",
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     class Meta:
         verbose_name = "Đánh giá"
@@ -191,28 +355,62 @@ class Review(models.Model):
         unique_together = ("product", "user")
 
     def __str__(self):
-        return f"{self.user.username} đánh giá {self.product.name} ({self.rating}★)"
+        return (
+            f"{self.user.username} đánh giá "
+            f"{self.product.name} ({self.rating}★)"
+        )
 
 
 class SupportRequest(models.Model):
     STATUS_OPEN = "open"
     STATUS_RESOLVED = "resolved"
+
     STATUS_CHOICES = [
         (STATUS_OPEN, "Đang chờ xử lý"),
         (STATUS_RESOLVED, "Đã xử lý"),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="support_requests", on_delete=models.CASCADE)
-    subject = models.CharField("Tiêu đề", max_length=200)
-    message = models.TextField("Nội dung")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_OPEN)
-    staff_reply = models.TextField("Phản hồi của nhân viên", blank=True)
-    handled_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="handled_requests",
-        on_delete=models.SET_NULL, null=True, blank=True,
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="support_requests",
+        on_delete=models.CASCADE
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
+    subject = models.CharField(
+        "Tiêu đề",
+        max_length=200
+    )
+
+    message = models.TextField(
+        "Nội dung"
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_OPEN
+    )
+
+    staff_reply = models.TextField(
+        "Phản hồi của nhân viên",
+        blank=True
+    )
+
+    handled_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="handled_requests",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
 
     class Meta:
         verbose_name = "Yêu cầu hỗ trợ"
@@ -220,4 +418,7 @@ class SupportRequest(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"[{self.get_status_display()}] {self.subject} - {self.user.username}"
+        return (
+            f"[{self.get_status_display()}] "
+            f"{self.subject} - {self.user.username}"
+        )

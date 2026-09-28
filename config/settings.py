@@ -12,6 +12,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Đọc file .env
 load_dotenv(BASE_DIR / ".env")
 
+# Cloudinary
+CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
+
 
 # =========================
 # SECURITY
@@ -38,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'cloudinary',
 
     'home',
     'shop',
