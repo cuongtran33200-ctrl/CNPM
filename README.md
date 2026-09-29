@@ -87,10 +87,3 @@ Thiết kế theo phong cách các sàn điện tử Việt Nam (Thế Giới Di
 Vào trang admin (`/admin/`) → **Sản phẩm** → chọn sản phẩm → tải ảnh lên trường **Hình ảnh**.
 Nếu sản phẩm chưa có ảnh, trang web sẽ hiển thị icon 📦 thay thế.
 
-## Gợi ý phát triển thêm (nếu cần nộp bản nâng cao)
-
-- Tích hợp thanh toán online (VNPay/Momo sandbox)
-- Đánh giá & bình luận sản phẩm
-- Mã giảm giá / khuyến mãi
-- Trang quản lý đơn hàng dành riêng cho nhân viên bán hàng (ngoài Django Admin)
-- Phân trang danh sách sản phẩm khi số lượng lớn
