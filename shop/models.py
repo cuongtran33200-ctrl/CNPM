@@ -177,6 +177,20 @@ class Product(models.Model):
         )
 
     @property
+    def image_url(self):
+        if not self.image:
+            return ""
+
+        if getattr(settings, "CLOUDINARY_URL", None):
+            return self.image.url
+
+        image_name = str(self.image.public_id)
+        image_path = settings.MEDIA_ROOT / f"{image_name}.jpg"
+        if image_path.exists():
+            return f"{settings.MEDIA_URL}{image_name}.jpg"
+        return ""
+
+    @property
     def in_stock(self):
         return self.stock > 0
 

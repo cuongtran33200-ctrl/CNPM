@@ -23,8 +23,8 @@
                 {% if product.discount_percent %}
                     <span class="discount-ribbon" style="position:absolute; top:12px; left:12px;">-{{ product.discount_percent }}%</span>
                 {% endif %}
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" id="mainProductImg">
+                {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" id="mainProductImg">
                 {% else %}
                     <div class="d-flex flex-column align-items-center justify-content-center" style="height:300px;">
                         <span style="font-size:4rem;">
@@ -255,8 +255,8 @@
                     </div>
                 {% endif %}
                 <a href="{{ p.get_absolute_url }}" class="fpt-product-img-box text-decoration-none">
-                    {% if p.image %}
-                        <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                    {% if p.image_url %}
+                        <img src="{{ p.image_url }}" alt="{{ p.name }}">
                     {% else %}
                         <div class="d-flex flex-column align-items-center justify-content-center">
                             <span style="font-size: 2.5rem;">📦</span>

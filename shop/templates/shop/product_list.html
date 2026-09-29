@@ -232,9 +232,9 @@ SBCB Shop - Điện thoại, Laptop, Phụ kiện
                 <a href="{{ product.get_absolute_url }}"
                    class="fpt-product-img-box text-decoration-none">
 
-                    {% if product.image %}
+                    {% if product.image_url %}
 
-                        <img src="{{ product.image.url }}"
+                        <img src="{{ product.image_url }}"
                              alt="{{ product.name }}">
 
                     {% else %}
@@ -476,9 +476,9 @@ SBCB Shop - Điện thoại, Laptop, Phụ kiện
                     <a href="{{ product.get_absolute_url }}"
                        class="fpt-product-img-box text-decoration-none">
 
-                        {% if product.image %}
+                        {% if product.image_url %}
 
-                            <img src="{{ product.image.url }}"
+                            <img src="{{ product.image_url }}"
                                  alt="{{ product.name }}"
                                  loading="lazy">
 
@@ -734,9 +734,9 @@ SBCB Shop - Điện thoại, Laptop, Phụ kiện
                 <a href="{{ product.get_absolute_url }}"
                    class="fpt-product-img-box text-decoration-none">
 
-                    {% if product.image %}
+                    {% if product.image_url %}
 
-                        <img src="{{ product.image.url }}"
+                        <img src="{{ product.image_url }}"
                              alt="{{ product.name }}"
                              loading="lazy">
 
