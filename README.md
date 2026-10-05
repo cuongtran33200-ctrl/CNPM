@@ -123,7 +123,7 @@ Order
 ## 📁 Cấu trúc project
 
 ```text
-CNPM/
+24CT1-TRANVIETCUONG/
 │
 ├── manage.py
 ├── requirements.txt
