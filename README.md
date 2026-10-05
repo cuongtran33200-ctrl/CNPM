@@ -1,89 +1,459 @@
-# SBCB Shop — Website bán đồ điện tử & phụ kiện (Django)
+# 🛒 Shop SBCB – Website bán hàng công nghệ
 
-Đồ án học phần CNPM-DAU · 24CT1-TRANVIETCUONG
+## 📌 Giới thiệu
 
-## Phân quyền 3 cấp
+**Shop SBCB** là website bán các sản phẩm công nghệ được xây dựng bằng **Django Framework**.
 
-Hệ thống dùng model `Profile` (gắn 1-1 với `User`) để lưu vai trò: `customer` / `staff` / `admin`.
-Tài khoản mới đăng ký mặc định là **Khách hàng**. Superuser tạo bằng `createsuperuser` tự động có vai trò **Quản trị viên**.
+Hệ thống hỗ trợ các chức năng chính:
 
-### 👤 Khách hàng
-- Đăng ký / đăng nhập / hồ sơ cá nhân (`/ho-so/`)
-- Trang chủ, danh mục, tìm kiếm, chi tiết sản phẩm
-- Giỏ hàng, thanh toán
-- Lịch sử mua hàng, chi tiết đơn hàng, theo dõi trạng thái
-- Đánh giá sản phẩm (chỉ với sản phẩm đã mua)
-- Gửi yêu cầu hỗ trợ (`/ho-tro/`)
+* 👤 Đăng ký, đăng nhập và quản lý tài khoản
+* 🛍️ Xem danh sách và chi tiết sản phẩm
+* 🔎 Phân loại sản phẩm theo danh mục
+* 🛒 Thêm sản phẩm vào giỏ hàng
+* 📦 Đặt hàng và theo dõi đơn hàng
+* ⭐ Đánh giá sản phẩm
+* 💬 Gửi yêu cầu hỗ trợ
+* 👨‍💼 Quản lý dành cho nhân viên
+* 👑 Trang quản trị dành cho Admin
+* ☁️ Lưu trữ hình ảnh sản phẩm bằng Cloudinary
 
-### 👨‍💼 Nhân viên (`/nhan-vien/...`)
-- Quản lý bán hàng: danh sách đơn hàng, xác nhận, cập nhật trạng thái, xử lý giao hàng
-- Quản lý kho: xem & cập nhật tồn kho, lọc sản phẩm sắp hết/hết hàng
-- Hỗ trợ: xem thông tin khách hàng, xử lý yêu cầu hỗ trợ
+---
 
-### 👑 Admin (`/quan-tri/...`)
-- Dashboard tổng quan (doanh thu, số đơn, khách hàng, sản phẩm sắp hết)
-- Quản lý người dùng & phân quyền (đổi vai trò customer/staff/admin)
-- Thống kê: doanh thu, sản phẩm bán chạy/tồn kho, khách hàng
-- Quản lý Sản phẩm/Danh mục/Đơn hàng đầy đủ qua Django Admin (`/admin/`)
+## 🛠️ Công nghệ sử dụng
 
-**Cách cấp quyền nhân viên/admin cho một tài khoản:** đăng nhập bằng tài khoản admin → vào menu 👑 Quản trị → Người dùng → chọn vai trò tương ứng → Lưu.
+| Công nghệ    | Mục đích                     |
+| ------------ | ---------------------------- |
+| Python       | Ngôn ngữ lập trình           |
+| Django       | Web Framework                |
+| MySQL        | Hệ quản trị cơ sở dữ liệu    |
+| Django ORM   | Kết nối và thao tác Database |
+| Cloudinary   | Lưu trữ hình ảnh sản phẩm    |
+| HTML / CSS   | Giao diện website            |
+| WhiteNoise   | Phục vụ Static Files         |
+| Git / GitHub | Quản lý mã nguồn             |
 
-## Chức năng chung
+---
 
-- Trang chủ hiển thị sản phẩm theo danh mục, tìm kiếm sản phẩm
-- Trang chi tiết sản phẩm
-- Giỏ hàng (thêm / xoá / cập nhật số lượng) — lưu theo session
-- Đăng ký / đăng nhập / đăng xuất
-- Đặt hàng (checkout) — yêu cầu đăng nhập
-- Xem lịch sử đơn hàng & chi tiết đơn hàng của bản thân
-- Trang quản trị (Django Admin) để quản lý Danh mục, Sản phẩm, Đơn hàng
+## 🗄️ Database – MySQL
 
-## Cấu trúc dự án
+Dự án sử dụng **MySQL** làm hệ quản trị cơ sở dữ liệu chính.
 
+### Database
+
+```text
+MySQL
+└── sbcb_shop
 ```
-config/     -> settings, urls chính của project
-home/       -> trang giới thiệu cũ (chuyển sang /about/)
-shop/       -> app chính: models, views, cart, forms, templates, admin
+
+### Django Database Engine
+
+```python
+django.db.backends.mysql
 ```
 
-## Cài đặt & chạy thử
+Cấu hình Database chính nằm trong:
+
+```text
+config/settings.py
+```
+
+Ví dụ:
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sbcb_shop',
+        'USER': '...',
+        'PASSWORD': '...',
+        'HOST': '...',
+        'PORT': '...',
+    },
+}
+```
+
+> **MySQL** là hệ quản trị cơ sở dữ liệu của dự án, còn **`sbcb_shop`** là tên Database.
+
+---
+
+## 📊 Database Models
+
+Các model được định nghĩa trong:
+
+```text
+shop/models.py
+```
+
+Các model chính:
+
+```text
+MySQL
+└── sbcb_shop
+    ├── Profile
+    ├── Category
+    ├── Product
+    ├── Order
+    ├── OrderItem
+    ├── Review
+    └── SupportRequest
+```
+
+### Quan hệ chính
+
+```text
+User
+ ├── Profile
+ ├── Order
+ ├── Review
+ └── SupportRequest
+
+Category
+ └── Product
+
+Product
+ ├── OrderItem
+ └── Review
+
+Order
+ └── OrderItem
+```
+
+---
+
+## 📁 Cấu trúc project
+
+```text
+CNPM/
+│
+├── manage.py
+├── requirements.txt
+├── README.md
+├── ca.pem
+│
+├── config/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py
+│   ├── wsgi.py
+│   └── __init__.py
+│
+├── home/
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   ├── views.py
+│   └── migrations/
+│
+└── shop/
+    ├── admin.py
+    ├── admin_views.py
+    ├── apps.py
+    ├── cart.py
+    ├── context_processors.py
+    ├── decorators.py
+    ├── forms.py
+    ├── models.py
+    ├── staff_views.py
+    ├── urls.py
+    ├── views.py
+    │
+    ├── migrations/
+    │   ├── 0001_initial.py
+    │   └── 0002_alter_product_image.py
+    │
+    ├── management/
+    │   └── commands/
+    │       ├── create_admin.py
+    │       └── seed_data.py
+    │
+    ├── static/
+    │   └── shop/
+    │       ├── css/
+    │       │   └── style.css
+    │       └── img/
+    │
+    ├── templates/
+    │   ├── registration/
+    │   │   ├── login.html
+    │   │   └── register.html
+    │   │
+    │   └── shop/
+    │       ├── base.html
+    │       ├── cart_detail.html
+    │       ├── checkout.html
+    │       ├── order_detail.html
+    │       ├── order_history.html
+    │       ├── product_detail.html
+    │       ├── product_list.html
+    │       ├── profile.html
+    │       ├── support.html
+    │       │
+    │       ├── admin_panel/
+    │       └── staff/
+    │
+    └── templatetags/
+        └── shop_filters.py
+```
+
+---
+
+## 👥 Phân quyền người dùng
+
+Hệ thống có 3 vai trò chính:
+
+### 👤 Customer
+
+Khách hàng có thể:
+
+* Xem sản phẩm
+* Thêm sản phẩm vào giỏ hàng
+* Đặt hàng
+* Xem lịch sử đơn hàng
+* Đánh giá sản phẩm
+* Gửi yêu cầu hỗ trợ
+
+### 👨‍💼 Staff
+
+Nhân viên có thể:
+
+* Quản lý đơn hàng
+* Quản lý khách hàng
+* Quản lý tồn kho
+* Xử lý yêu cầu hỗ trợ
+
+### 👑 Admin
+
+Admin có quyền quản lý toàn bộ hệ thống và tài khoản người dùng.
+
+---
+
+## 🛍️ Các chức năng chính
+
+### Sản phẩm
+
+* Danh mục sản phẩm
+* Thông tin sản phẩm
+* Giá bán
+* Giá gốc
+* Số lượng tồn kho
+* Cảnh báo sắp hết hàng
+* Hình ảnh sản phẩm
+* Đánh giá và xếp hạng
+
+### Giỏ hàng
+
+```text
+Product
+   ↓
+Cart
+   ↓
+Checkout
+   ↓
+Order
+   ↓
+OrderItem
+```
+
+### Đơn hàng
+
+Các trạng thái đơn hàng:
+
+```text
+pending
+   ↓
+confirmed
+   ↓
+shipping
+   ↓
+completed
+```
+
+Ngoài ra đơn hàng có thể chuyển sang:
+
+```text
+cancelled
+```
+
+---
+
+## ☁️ Cloudinary
+
+Hình ảnh sản phẩm được lưu trữ thông qua **Cloudinary**.
+
+Model `Product` sử dụng:
+
+```python
+CloudinaryField
+```
+
+Ảnh sản phẩm được lưu trong thư mục:
+
+```text
+shop-sbcb/products
+```
+
+---
+
+## ⚙️ Cài đặt project
+
+### 1. Clone repository
 
 ```bash
-# 1. Tạo và kích hoạt môi trường ảo
+git clone https://github.com/cuongtran33200-ctrl/CNPM.git
+cd CNPM
+```
+
+### 2. Tạo virtual environment
+
+Windows:
+
+```bash
 python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
+```
 
-# 2. Cài thư viện
+Kích hoạt:
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Cài đặt thư viện
+
+```bash
 pip install -r requirements.txt
+```
 
-# 3. Tạo database (SQLite mặc định)
-python manage.py makemigrations shop
+### 4. Cấu hình biến môi trường
+
+Tạo file:
+
+```text
+.env
+```
+
+Các biến môi trường cần thiết:
+
+```text
+DJANGO_SECRET_KEY=your_secret_key
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+
+DB_NAME=sbcb_shop
+DB_USER=your_mysql_user
+DB_PASSWORD=your_mysql_password
+DB_HOST=your_mysql_host
+DB_PORT=your_mysql_port
+
+CLOUDINARY_URL=your_cloudinary_url
+```
+
+### 5. Chạy migration
+
+```bash
 python manage.py migrate
-# Lưu ý: nếu đã migrate từ trước khi có phần phân quyền,
-# hãy chạy lại 2 lệnh trên để tạo bảng Profile/Review/SupportRequest mới.
+```
 
-# 4. Tạo dữ liệu mẫu (danh mục + sản phẩm điện tử)
+### 6. Tạo dữ liệu mẫu
+
+```bash
 python manage.py seed_data
+```
 
-# 5. Tạo tài khoản quản trị
-python manage.py createsuperuser
+### 7. Tạo tài khoản Admin
 
-# 6. Chạy server
+```bash
+python manage.py create_admin
+```
+
+### 8. Chạy server
+
+```bash
 python manage.py runserver
 ```
 
-Sau đó truy cập:
-- Trang chủ: http://127.0.0.1:8000/
-- Trang quản trị: http://127.0.0.1:8000/admin/
+Truy cập:
 
-## Giao diện
+```text
+http://127.0.0.1:8000/
+```
 
-Thiết kế theo phong cách các sàn điện tử Việt Nam (Thế Giới Di Động / FPT Shop): tông đỏ thương hiệu + cam nhấn, thanh tìm kiếm nổi bật, sidebar danh mục, card sản phẩm có ribbon giảm giá.
+---
 
-Để hiện badge giảm giá (VD: "-15%"), vào admin → **Sản phẩm** → điền **Giá gốc (trước giảm)** cao hơn **Giá** hiện tại. Nếu để trống, sản phẩm hiển thị bình thường không có badge.
+## 🚀 Deployment
 
-## Thêm hình ảnh sản phẩm
+Project có thể triển khai Django trên nền tảng cloud.
 
-Vào trang admin (`/admin/`) → **Sản phẩm** → chọn sản phẩm → tải ảnh lên trường **Hình ảnh**.
-Nếu sản phẩm chưa có ảnh, trang web sẽ hiển thị icon 📦 thay thế.
+Database sử dụng:
 
+```text
+MySQL
+```
+
+Database production:
+
+```text
+sbcb_shop
+```
+
+Hình ảnh sản phẩm:
+
+```text
+Cloudinary
+```
+
+---
+
+## 🔗 Repository
+
+GitHub:
+
+https://github.com/cuongtran33200-ctrl/CNPM
+
+GitDiagram:
+
+https://gitdiagram.com/cuongtran33200-ctrl/cnpm
+
+---
+
+## 👨‍💻 Thông tin dự án
+
+**Tên dự án:** Shop SBCB
+**Framework:** Django
+**Database:** MySQL
+**Database name:** sbcb_shop
+**Project:** CNPM
+**Lớp:** 24CT1
+
+---
+
+## 📌 Kiến trúc tổng quát
+
+```text
+                    SHOP SBCB
+                        │
+                        ▼
+                  Django Framework
+                        │
+                 ┌──────┴──────┐
+                 │             │
+                 ▼             ▼
+              Shop App      Home App
+                 │
+                 ▼
+              Django ORM
+                 │
+                 ▼
+              MySQL
+                 │
+                 ▼
+             sbcb_shop
+                 │
+      ┌──────────┼───────────┐
+      ▼          ▼           ▼
+  Category    Product      Order
+                 │           │
+                 ▼           ▼
+             Review       OrderItem
+```
