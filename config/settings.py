@@ -96,11 +96,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # =========================
 # DATABASE
 # =========================
-
+MYSQL_DATABASE = 'sbcb_shop'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', ''),
+        'NAME': os.environ.get('DB_NAME', MYSQL_DATABASE),
         'USER': os.environ.get('DB_USER', ''),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
         'HOST': os.environ.get('DB_HOST', ''),
@@ -112,13 +112,13 @@ DATABASES = {
         },
     },
 
+
     # SQLite dùng làm dữ liệu backup/local
     'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
 }
-
 
 # =========================
 # PASSWORD VALIDATION
